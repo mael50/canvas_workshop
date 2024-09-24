@@ -10,19 +10,13 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
-class TextType extends ElementType
+class QRCodeType extends ElementType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
         $builder
-            ->add('textColor')
-            ->add('backgroundColor')
-            ->add('placeholder')
-            ->add('align')
-            ->add('bold')
-            ->add('italic')
-            ->add('fontSize')
+            ->add('text')
             ->add('submit', SubmitType::class)
         ;
     }

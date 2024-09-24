@@ -13,6 +13,9 @@ class TemplateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('name')
+            ->add('width')
+            ->add('height')
             ->add('color', EntityType::class, [
                 'class' => Color::class,
                 'choice_label' => 'codeHexa', // Affiche le code hexadécimal de la couleur
