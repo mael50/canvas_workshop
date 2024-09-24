@@ -5,7 +5,18 @@ module.exports = {
     "./templates/**/*.html.twig",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
+      colors: {
+        primary: '#18534F',
+        secondary: '#226D68',
+        clear: '#ECF8F6',
+        yellow: '#FEEAA1',
+        orangeCustom: '#D6955B',
+      },
+    },
   },
   plugins: [],
 }
