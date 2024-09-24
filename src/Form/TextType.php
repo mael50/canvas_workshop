@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Form;
+
+use App\Entity\Template;
+use App\Entity\Text;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class TextType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('posX')
+            ->add('posY')
+            ->add('width')
+            ->add('height')
+            ->add('inputAssocie')
+            ->add('textColor')
+            ->add('backgroundColor')
+            ->add('placeholder')
+            ->add('align')
+            ->add('bold')
+            ->add('italic')
+            ->add('fontSize')
+            ->add('template', EntityType::class, [
+                'class' => Template::class,
+                'choice_label' => 'id',
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Text::class,
+        ]);
+    }
+}

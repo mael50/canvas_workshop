@@ -29,6 +29,9 @@ class Text extends Element
     #[ORM\Column]
     private ?float $fontSize = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $fontFamily = null;
+
     public function getTextColor(): ?string
     {
         return $this->textColor;
@@ -109,6 +112,18 @@ class Text extends Element
     public function setFontSize(float $fontSize): static
     {
         $this->fontSize = $fontSize;
+
+        return $this;
+    }
+
+    public function getFontFamily(): ?string
+    {
+        return $this->fontFamily;
+    }
+
+    public function setFontFamily(string $fontFamily): static
+    {
+        $this->fontFamily = $fontFamily;
 
         return $this;
     }
