@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la position de l'élément {{ element.id }}{% endblock %}
+
+{% block body %}
+<style>
+    #element {
+        position: absolute;
+        width: {{ element.width }}px;
+        height: {{ element.height }}px;
+        left: {{ element.posX }}px;
+        top: {{ element.posY }}px;
+        background-color: lightblue;
+        border: 1px solid #000;
+        cursor: move;
+    }
+</style>
+
+<div class="example-wrapper">
+    <h1>Déplacer l'élément {{ element.id }}</h1>
+
+    <div id="element" draggable="true" data-id="{{ element.id }}">
+        {{ element.inputAssocie }}
+    </div>
+</div>
+
+<script>
+    const element = document.getElementById('element');
+    
+    // Permettre le drag
+    element.addEventListener('dragstart', function(e) {
+        e.dataTransfer.setData("text/plain", null); // Autoriser le drag
+    });
+
+    // Déplacement de l'élément
+    element.addEventListener('dragend', function(e) {
+        const newPosX = e.pageX - (element.offsetWidth / 2); // Nouvelle position X
+        const newPosY = e.pageY - (element.offsetHeight / 2); // Nouvelle position Y
+
+        // Appliquer les nouvelles positions dans le style
+        element.style.left = newPosX + 'px';
+        element.style.top = newPosY + 'px';
+
+        // Fonction AJAX pour mettre à jour en base de données
+        updatePosition(element.dataset.id, newPosX, newPosY);
+    });
+
+    // Fonction AJAX pour mettre à jour la position en base de données
+    function updatePosition(id, posX, posY) {
+        fetch('/element/update-position', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                id: id,
+                posX: posX,
+                posY: posY
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Position mise à jour avec succès');
+            } else {
+                console.error('Erreur lors de la mise à jour de la position');
+            }
+        })
+        .catch(error => console.error('Erreur AJAX:', error));
+    }
+</script>
+{% endblock %}
