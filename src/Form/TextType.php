@@ -17,27 +17,46 @@ class TextType extends ElementType
         parent::buildForm($builder, $options);
         $builder
             ->add('textColor', null, [
+                'label' => 'Couleur du texte:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ])
             ->add('backgroundColor', null, [
+                'label' => 'Couleur de fond:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ])
             ->add('placeholder', null, [
+                'label' => 'Placeholder:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ])
-            ->add('align', null, [
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+            ->add('align', null , [
+                'label' => 'Alignement:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+
+                //menu select
+                'attr' => ['class' => 'form-select mt-1 block w-full border-gray-300 rounded-md']
             ])
             ->add('bold', null, [
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+                'label' => 'Italic:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
             ])
             ->add('italic', null, [
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+                'label' => 'Italic:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
             ])
             ->add('fontSize', null, [
+                'label' => 'Taile d\'écriture:',
+                'label_attr' => ['class' => 'text-white mt-2'],
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ])
             ->add('fontFamily', null, [
+                'label' => 'Italic:',
+                'label_attr' => ['class' => 'text-white mt-2'],
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ])
         ;

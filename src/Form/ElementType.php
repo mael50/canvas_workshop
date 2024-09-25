@@ -17,18 +17,48 @@ class ElementType extends AbstractType
     {
         $builder
             ->add('posX', RangeType::class, [
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+                'label' => 'Pos X:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+                'attr' => [
+                    'class' => 'slider mt-2',
+                    'min' => 0,  // Valeur minimale
+                    'max' => 100,  // Valeur maximale
+                ],
             ])
             ->add('posY', RangeType::class, [
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+                'label' => 'Pos Y:',
+                'label_attr' => ['class' => 'text-white mt-2'],
+
+                'attr' => [
+                    'class' => 'slider mt-2',
+                    'min' => 0,  // Valeur minimale
+                    'max' => 100,  // Valeur maximale
+                ],
             ])
             ->add('width', RangeType::class, [
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+                'label' => 'Largeur:',
+                'label_attr' => ['class' => 'text-white mt-2'],
+
+                'attr' => [
+                    'class' => 'slider mt-2',
+                    'min' => 0,  // Valeur minimale
+                    'max' => 100,  // Valeur maximale
+                ],
             ])
             ->add('height', RangeType::class, [
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+                'label' => 'Hauteur:',
+                'label_attr' => ['class' => 'text-white mt-2'],
+
+                'attr' => [
+                    'class' => 'slider mt-2',
+                    'min' => 0,  // Valeur minimale
+                    'max' => 100,  // Valeur maximale
+                ],
             ])
             ->add('inputAssocie', null, [
+                'label' => 'Input:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ])
         ;
