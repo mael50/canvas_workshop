@@ -18,14 +18,3 @@
         {% block body %}{% endblock %}
     </body>
 </html>
-
-		{% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-			{% block importmap %}
-				{{ importmap('app') }}
-			{% endblock %}
-		{% endblock %}
-	</head>
-	<body class="h-full"> {% block body %}{% endblock %}
-		</body>
-	</html>
