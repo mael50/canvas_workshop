@@ -1,0 +1,259 @@
+{# templates/header.html.twig #}
+<header class="bg-secondary">
+	<div class="flex flex-row justify-between items-center p-4">
+
+		<img src="{{ asset('images/logo_blanc.png') }}" alt="Logo" style="width: 250px">
+
+		<div
+			class="flex w-1/4 flex justify-around">
+			<!-- 50% de la largeur parent -->
+			<a href="" class="text-white">EXPLORER</a>
+			<a href="#" id="openModalBtn" class="text-white">CRÉER</a>
+
+		</div>
+
+	</div>
+
+	<!-- Modal -->
+	<div
+		id="modal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+		<!-- Background backdrop -->
+		<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+			<div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+				<div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+					<div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+						<div class="">
+
+							<div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+								<h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Création d'un template</h3>
+								<div class="mt-2">
+									<p class="text-sm text-gray-500">Veuillez attribuer des propriétés à ce template. Tous les changements seront enregistrés. Cette action ne peut pas être annulée.</p>
+								</div>
+							</div>
+							<div>
+								<form id="templateForm" class="space-y-4 mt-3">
+									<div>
+										<label for="name" class="block text-sm font-medium text-gray-700">Nom du template</label>
+										<input type="text" id="name" name="name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+									</div>
+									<div>
+										<label for="height" class="block text-sm font-medium text-gray-700">Hauteur (en pixels)</label>
+										<input type="number" id="height" name="height" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+									</div>
+									<div>
+										<label for="width" class="block text-sm font-medium text-gray-700">Largeur (en pixels)</label>
+										<input type="number" id="width" name="width" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+									</div>
+									<div>
+										<label for="colorCount" class="block text-sm font-medium text-gray-700">Nombre de couleurs</label>
+										<select id="colorCount" name="colorCount" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+											<option value="">Sélectionner...</option>
+											<!-- Les options seront ajoutées dynamiquement ici -->
+										</select>
+									</div>
+									<div
+										id="colorOptions" class="space-y-2 hidden"><!-- Les options de couleurs seront ajoutées ici dynamiquement -->
+									</div>
+									<div class="flex justify-around">
+										<button id="closeModalBtn" type="button" class="flex flex-row bg-clear text-primary px-4 py-2 rounded-md">
+											Annuler
+										</button>
+										<button type="submit" id="submitFormBtn" class="flex flex-row bg-primary text-clear px-4 py-2 rounded-md">
+											Créer le template
+										</button>
+									</div>
+
+								</form>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- JavaScript -->
+	<script>
+		const openModalBtn = document.getElementById('openModalBtn');
+const modal = document.getElementById('modal');
+const closeModalBtn = document.getElementById('closeModalBtn');
+
+// Open modal on click
+openModalBtn.addEventListener('click', function (event) {
+event.preventDefault(); // Prevent default anchor behavior
+modal.classList.remove('hidden');
+});
+
+// Close modal on Cancel button click
+closeModalBtn.addEventListener('click', function () {
+modal.classList.add('hidden');
+});
+
+// Close modal on outside click (optional)
+window.addEventListener('click', function (event) {
+if (event.target === modal) {
+modal.classList.add('hidden');
+}
+});
+	</script>
+
+
+	<script>
+		fetch('/colors', {
+method: 'GET',
+headers: {
+'Content-Type': 'application/json'
+}
+}).then(response => response.json()).then(colors => {
+console.log('Couleurs récupérées:', colors);
+
+const colorCountSelect = document.getElementById('colorCount');
+
+// Ajouter une option pour chaque couleur disponible
+for (let i = 1; i <= colors.length; i++) {
+const option = document.createElement('option');
+option.value = i;
+option.textContent = `${i} couleur${
+i > 1 ? 's' : ''
+}`;
+colorCountSelect.appendChild(option);
+}
+}).catch(error => {
+console.error('Erreur lors de la récupération des couleurs:', error);
+});
+	</script>
+	<script>
+		const colorCountSelect = document.getElementById('colorCount');
+const colorOptionsDiv = document.getElementById('colorOptions');
+
+colorCountSelect.addEventListener('change', function () {
+const colorCount = parseInt(this.value);
+colorOptionsDiv.innerHTML = '';
+
+if (colorCount > 0) {
+fetch('/colors', {
+method: 'GET',
+headers: {
+'Content-Type': 'application/json'
+}
+}).then(response => response.json()).then(colors => {
+
+const combinations = getColorCombinations(colors, colorCount);
+
+
+combinations.forEach((combination, index) => {
+const colorOptionDiv = document.createElement('div');
+colorOptionDiv.className = 'flex items-center';
+
+// Ajouter un bouton radio pour chaque combinaison
+const radioInput = document.createElement('input');
+radioInput.type = 'radio';
+radioInput.name = 'colorCombination';
+radioInput.value = combination.map(color => color.id).join(',');
+radioInput.id = `combination-${index}`;
+radioInput.className = 'mr-2';
+
+// Créer un label pour l'option avec la pastille de couleur et le code hexa
+const colorOptionLabel = document.createElement('label');
+colorOptionLabel.htmlFor = `combination-${index}`;
+colorOptionLabel.className = 'flex items-center';
+
+combination.forEach(color => { // Créer la pastille de couleur
+const colorCircle = document.createElement('div');
+colorCircle.style.backgroundColor = color.codeHexa;
+colorCircle.className = 'color-circle w-6 h-6 rounded-full mr-2';
+
+// Créer un span pour afficher la couleur hexadécimale avec un espace après
+const colorHexaText = document.createElement('span');
+colorHexaText.textContent = color.codeHexa + ' ';
+
+// Ajouter la pastille et le texte au label
+colorOptionLabel.appendChild(colorCircle);
+colorOptionLabel.appendChild(colorHexaText);
+});
+
+// Ajouter le bouton radio et le label au conteneur d'options
+colorOptionDiv.appendChild(radioInput);
+colorOptionDiv.appendChild(colorOptionLabel);
+colorOptionsDiv.appendChild(colorOptionDiv);
+});
+
+colorOptionsDiv.classList.remove('hidden');
+}).catch(error => {
+console.error('Erreur lors de la récupération des couleurs:', error);
+});
+} else {
+colorOptionsDiv.classList.add('hidden');
+}
+});
+
+function getColorCombinations(colors, colorCount) {
+const combinations = [];
+
+function combine(input, length, start, result) {
+if (result.length === length) {
+combinations.push([... result]);
+return;
+}
+
+for (let i = start; i < input.length; i++) {
+result.push(input[i]);
+combine(input, length, i + 1, result);
+result.pop();
+}
+}
+
+combine(colors, colorCount, 0, []);
+return combinations;
+}
+	</script>
+
+	<script>
+		document.getElementById('templateForm').addEventListener('submit', function (event) {
+event.preventDefault(); // Empêche la soumission par défaut du formulaire
+
+const name = document.getElementById('name').value;
+const height = document.getElementById('height').value;
+const width = document.getElementById('width').value;
+const colorCombination = document.querySelector('input[name="colorCombination"]:checked');
+// Récupérer la combinaison sélectionnée
+
+// Vérifier que tous les champs requis sont remplis
+if (! name || ! height || ! width || ! colorCombination) {
+alert('Veuillez remplir tous les champs et sélectionner une combinaison de couleurs.');
+return;
+}
+
+// Préparer les données à envoyer
+const formData = {
+name: name,
+height: parseInt(height),
+width: parseInt(width),
+colors: colorCombination.value.split(',').map(id => parseInt(id)) // Convertit en tableau d'ID de couleurs
+};
+
+// Envoyer les données via AJAX
+fetch('/template', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json'
+},
+body: JSON.stringify(formData)
+}).then(response => response.json()).then(data => {
+console.log(data);
+// Redirect to /create-element/{id} with the new template ID
+window.location.href = `/create-template/${
+data.id
+}`;
+}).catch(error => {
+console.error('Erreur lors de la création du template:', error);
+})
+
+});
+	</script>
+
+</header>

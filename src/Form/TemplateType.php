@@ -16,15 +16,41 @@ class TemplateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name')
-            ->add('width')
-            ->add('height')
+            ->add('name', null, [
+                'label' => 'Nom:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+                'attr' => [
+                    'value' => 'Template name',
+                    'class' => 'form-control  rounded-md shadow-sm secondary'
+                ]
+            ])
+            ->add('width', null, [
+                'label' => 'Largeur:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+                'attr' => [
+                    'readonly' => true,
+                    'value' => '123',
+                    'class' => 'form-control  rounded-md shadow-sm  focus:secondary'
+                ]
+            ])
+            ->add('height', null, [
+                'label' => 'Hauteur:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+                'attr' => [
+                    'readonly' => true,
+                    'value' => '123',
+                    'class' => 'form-control rounded-md shadow-sm  focus:secondary'
+                ]
+            ])
             ->add('color', EntityType::class, [
                 'class' => Color::class,
-                'choice_label' => 'codeHexa', // Affiche le code hexadécimal de la couleur
-                'label' => 'Choose a color',
+                'label' => 'Couleur:',
+                'multiple' => true,
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
                 'attr' => [
-                    'class' => 'form-control' // Ajoutez une classe CSS si nécessaire
+                    'readonly' => true,
+                    'value' => '#1234 + #1124',
+                    'class' => 'form-control rounded-md shadow-sm focus:secondary'
                 ]
             ])
             ->add('created_at', HiddenType::class)
