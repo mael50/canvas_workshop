@@ -29,10 +29,18 @@ class ImageType extends ElementType
         parent::buildForm($builder, $options);
         $builder
             ->add('name', null, [
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+                'label' => 'Nom:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+                'attr' => [
+                    'value'=> 'Template name',
+                    'class' => 'form-control  rounded-md shadow-sm secondary'
+                ]
             ])
             ->add('src', FileType::class, [
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md'],
+                'label' => 'Src:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+
+                'attr' => ['class' => 'form-input mt-1 rounded-md shadow-sm secondary text-white'],
                 'constraints' => [
                     new File([
                         'maxSize' => '1024k',

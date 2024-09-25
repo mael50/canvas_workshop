@@ -18,6 +18,9 @@ class QRCodeType extends ElementType
         parent::buildForm($builder, $options);
         $builder
             ->add('text', null, [
+                'label' => 'Texte:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ]);
     }

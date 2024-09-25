@@ -36,15 +36,26 @@ class TextType extends ElementType
         parent::buildForm($builder, $options);
         $builder
             ->add('textColor', ColorType::class, [
+                'label' => 'Couleur du texte:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ])
             ->add('backgroundColor', ColorType::class, [
+                'label' => 'Couleur de fond:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ])
             ->add('placeholder', null, [
+                'label' => 'Placeholder:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
+
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ])
             ->add('align', ChoiceType::class, [
+                'label' => 'Alignement:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
                 'choices' => [
                     'left' => 'left',
                     'center' => 'center',
@@ -56,22 +67,27 @@ class TextType extends ElementType
                     'middle' => 'middle',
                     'full' => 'full',
                 ],
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+                //menu select
+                'attr' => ['class' => 'form-select mt-1 block w-full border-gray-300 rounded-md']
             ])
             ->add('bold', null, [
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+                'label' => 'Italic:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
             ])
             ->add('italic', null, [
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+                'label' => 'Italic:',
+                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
             ])
             ->add('fontSize', null, [
+                'label' => 'Taile d\'écriture:',
+                'label_attr' => ['class' => 'text-white mt-2'],
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ])
             ->add('fontFamily', ChoiceType::class, [
                 'choices' => $fontChoices,
-                'attr' => [
-                    'class' => 'form-input mt-1 block w-full border-gray-300 rounded-md'
-                ],
+                'label' => 'Police:',
+                'label_attr' => ['class' => 'text-white mt-2'],
+                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ])
         ;
     }
