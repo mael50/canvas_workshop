@@ -54,13 +54,27 @@ class CreateTemplateController extends AbstractController
         $textForm->handleRequest($request);
         $qrCodeForm->handleRequest($request);
 
+        // Gestion du formulaire Template
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $template = new Template();
+            $template->setName($form->get('name')->getData());
+            $template->setWidth($form->get('width')->getData());
+            $template->setHeight($form->get('height')->getData());
+            $template->setCreatedAt(new \DateTimeImmutable()); // Définit created_at
+            $template->setUpdatedAt(new \DateTimeImmutable()); // Définit updated_at
+
+            // Gestion des couleurs si besoin
+            foreach ($form->get('color')->getData() as $color) {
+                $template->addColor($color);
+            }
             $entityManager->persist($template);
             $entityManager->flush();
 
             return $this->redirectToRoute('create_template', ['id' => $template->getId()]);
         }
 
+        // Gestion des autres formulaires (Image, Text, QRCode)
         if ($imageForm->isSubmitted() && $imageForm->isValid()) {
             $image = $imageForm->getData();
 
