@@ -32,10 +32,22 @@
 			</div>
 
 			<div class="w-2/3 pl-4">
-				<div class="mb-4">
-					<button data-action="click->form#loadForm" data-url="{{ path('form_image') }}" class="bg-green-500 text-white py-2 px-4 rounded mb-2">Ajouter Image</button>
-					<button data-action="click->form#loadForm" data-url="{{ path('form_qrcode') }}" class="bg-green-500 text-white py-2 px-4 rounded mb-2">Ajouter QR Code</button>
-					<button data-action="click->form#loadForm" data-url="{{ path('form_text') }}" class="bg-green-500 text-white py-2 px-4 rounded">Ajouter Texte</button>
+				<div class="flex mb-4 justify-around">
+					<button data-action="click->form#loadForm" data-url="{{ path('form_image') }}" class="bg-orangeCustom
+					 text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
+						<img src="{{ asset('images/image.png') }}" alt="Ajouter Image" class="h-14 mb-1"> <!-- Ajuster la hauteur de l'image -->
+						Ajouter Image
+					</button>
+
+
+					<button data-action="click->form#loadForm" data-url="{{ path('form_qrcode') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
+						<img src="{{ asset('images/qrCode.png') }}" alt="Ajouter QrCode" class="h-14 mb-1"> <!-- Image ajoutée au-dessus -->
+						Ajouter QR Code
+					</button>
+					<button data-action="click->form#loadForm" data-url="{{ path('form_text') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
+						<img src="{{ asset('images/text.png') }}" alt="Ajouter Text" class="h-14 mb-1"> <!-- Image ajoutée au-dessus -->
+						Ajouter Texte
+					</button>
 				</div>
 				<div
 					id="canvas" data-controller="element-manager" class="bg-white p-4 rounded shadow"><!-- Zone de drop pour le canvas -->

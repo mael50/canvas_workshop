@@ -17,7 +17,6 @@ class TemplateType extends AbstractType
                 'label' => 'Nom:',
                 'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
                 'attr' => [
-                    'readonly' => true  ,
                     'value'=> 'Template name',
                     'class' => 'form-control  rounded-md shadow-sm secondary'
                 ]
