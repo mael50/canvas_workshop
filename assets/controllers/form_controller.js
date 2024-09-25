@@ -17,11 +17,20 @@ export default class extends Controller {
             .then(html => {
                 this.formContainerTarget.innerHTML = html;
             })
+            .then(() =>{
+                this.setIntoElementEdit();
+            })
             .then(() => {
                 this.showRangeValue();
             });
 
 
+    }
+    setIntoElementEdit(){
+        document.getElementById('elementEditPane').classList.remove('hidden');
+        document.getElementById('templateEditPane').classList.add('hidden');
+        document.getElementById('elementEditBtn').classList.add('selected');
+        document.getElementById('templateEditBtn').classList.remove('selected');
     }
 
     showRangeValue() {
