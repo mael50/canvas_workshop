@@ -20,6 +20,11 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Service\GoogleFontService:
+        arguments:
+            $apiKey: '%env(GOOGLE_FONTS_API_KEY)%'
+
+
     App\Service\ImageStorage:
         arguments:
             $targetDirectory: '%kernel.project_dir%/public/uploads'
