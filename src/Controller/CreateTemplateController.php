@@ -42,7 +42,6 @@ class CreateTemplateController extends AbstractController
             $template = new Template();
         }
 
-
         $form = $this->createForm(TemplateType::class, $template);
 
         $imageForm = $this->createForm(ImageType::class);

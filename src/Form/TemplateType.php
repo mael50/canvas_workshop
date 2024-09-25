@@ -29,7 +29,6 @@ class TemplateType extends AbstractType
                 'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
                 'attr' => [
                     'readonly' => true,
-                    'value' => '123',
                     'class' => 'form-control  rounded-md shadow-sm  focus:secondary'
                 ]
             ])
@@ -38,7 +37,6 @@ class TemplateType extends AbstractType
                 'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
                 'attr' => [
                     'readonly' => true,
-                    'value' => '123',
                     'class' => 'form-control rounded-md shadow-sm  focus:secondary'
                 ]
             ]);
