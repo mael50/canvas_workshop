@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Color;
 use App\Entity\Image;
 use App\Form\TextType;
+use App\Entity\Element;
 use App\Form\ImageType;
 use App\Entity\Template;
 use App\Form\QRCodeType;
@@ -14,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CreateTemplateController extends AbstractController
@@ -25,11 +28,23 @@ class CreateTemplateController extends AbstractController
         $this->imageStorage = $imageStorage;
     }
 
-
-    #[Route('/create-template', name: 'create_template')]
-    public function createTemplate(Request $request, EntityManagerInterface $entityManager): Response
+    // Dans votre méthode createTemplate
+    #[Route('/create-template/{id}', name: 'create_template', methods: ['GET', 'POST'])]
+    public function createTemplate(Request $request, EntityManagerInterface $entityManager, string $id = null): Response
     {
-        $form = $this->createForm(TemplateType::class);
+        $template = null;
+        if ($id) {
+            $template = $entityManager->getRepository(Template::class)->find($id);
+        }
+
+        // Assurez-vous que le template est bien initialisé
+        if (!$template) {
+            $template = new Template();
+        }
+
+
+        $form = $this->createForm(TemplateType::class, $template);
+
         $imageForm = $this->createForm(ImageType::class);
         $textForm = $this->createForm(TextType::class);
         $qrCodeForm = $this->createForm(QRCodeType::class);
@@ -40,15 +55,10 @@ class CreateTemplateController extends AbstractController
         $qrCodeForm->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $template = new Template();
-            $template->setName($form->get('name')->getData());
-            $template->setWidth($form->get('width')->getData());
-            $template->setHeight($form->get('height')->getData());
-
             $entityManager->persist($template);
             $entityManager->flush();
 
-            return $this->redirectToRoute('create_template');
+            return $this->redirectToRoute('create_template', ['id' => $template->getId()]);
         }
 
         if ($imageForm->isSubmitted() && $imageForm->isValid()) {
@@ -68,21 +78,21 @@ class CreateTemplateController extends AbstractController
             $entityManager->persist($image);
             $entityManager->flush();
 
-            return $this->redirectToRoute('create_template');
+            return $this->redirectToRoute('create_template', ['id' => $template->getId()]);
         }
 
         if ($textForm->isSubmitted() && $textForm->isValid()) {
             $entityManager->persist($textForm->getData());
             $entityManager->flush();
 
-            return $this->redirectToRoute('create_template');
+            return $this->redirectToRoute('create_template', ['id' => $template->getId()]);
         }
 
         if ($qrCodeForm->isSubmitted() && $qrCodeForm->isValid()) {
             $entityManager->persist($qrCodeForm->getData());
             $entityManager->flush();
 
-            return $this->redirectToRoute('create_template');
+            return $this->redirectToRoute('create_template', ['id' => $template->getId()]);
         }
 
         return $this->render('create_template/index.html.twig', [

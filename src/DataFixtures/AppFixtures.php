@@ -11,12 +11,10 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $colors = [
-            '#FF0000', // Red
-            '#00FF00', // Green
-            '#0000FF', // Blue
-            '#FFFF00', // Yellow
-            '#FF00FF', // Magenta
-            '#00FFFF', // Cyan
+            '#FF0000',
+            '#000000',
+            '#FFFFFF',
+            '#FFFF00',
         ];
 
         foreach ($colors as $color) {

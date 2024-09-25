@@ -30,7 +30,7 @@
 						</div>
 						<div class="ml-4">
 							<p class="text-primary font-bold font-sans">{{ template.name }}</p>
-							<p class="text-orangeCustom text-xs">Créer il y a 2 jours</p>
+							<p class="text-orangeCustom text-xs">{{ template.updatedAt ? 'Édité le ' ~ template.updatedAt|date('d/m/Y') : 'Créé le ' ~ template.createdAt|date('d/m/Y') }}</p>
 						</div>
 					</div>
 					<div>

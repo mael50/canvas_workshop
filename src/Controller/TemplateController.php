@@ -51,14 +51,20 @@ class TemplateController extends AbstractController
         // Persister l'objet Template dans la base de données
         $this->entityManager->persist($template);
         $this->entityManager->flush(); // Enregistre les changements dans la base de données
-        return $this->json(['success' => true]);
+        return $this->json([
+            'id' => $template->getId(),
+            'name' => $template->getName(),
+            'width' => $template->getWidth(),
+            'height' => $template->getHeight(),
+            'colors' => $template->getColor()->map(fn($color) => $color->getId())->toArray(),
+        ]);
     }
 
     #[Route('/template/{id} ', name: 'app_template_read', methods: ['POST'])]
     public function delete(Request $request)
     {
-        $id= $request->get('id');
-        $template= $this->templateRepository->find($id);
+        $id = $request->get('id');
+        $template = $this->templateRepository->find($id);
         $this->entityManager->remove($template);
         $this->entityManager->flush();
         return $this->json(['success' => true]);

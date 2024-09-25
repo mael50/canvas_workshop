@@ -18,11 +18,9 @@ class TemplateType extends AbstractType
             ->add('height')
             ->add('color', EntityType::class, [
                 'class' => Color::class,
-                'choice_label' => 'codeHexa', // Affiche le code hexadécimal de la couleur
-                'label' => 'Choose a color',
-                'attr' => [
-                    'class' => 'form-control' // Ajoutez une classe CSS si nécessaire
-                ]
+                'choice_label' => 'codeHexa',
+                'multiple' => true,
+                'expanded' => true,
             ]);
     }
 

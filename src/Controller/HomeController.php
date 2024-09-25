@@ -16,8 +16,12 @@ class HomeController extends AbstractController
     {
         $templates = $templateRepository->findAll();
 
+        // order by most recent
+        usort($templates, function (Template $a, Template $b) {
+            return $b->getUpdatedAt() <=> $a->getUpdatedAt();
+        });
+
         return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
             'templates' => $templates,
         ]);
     }
