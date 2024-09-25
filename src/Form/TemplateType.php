@@ -7,6 +7,9 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 class TemplateType extends AbstractType
 {
@@ -23,7 +26,19 @@ class TemplateType extends AbstractType
                 'attr' => [
                     'class' => 'form-control' // Ajoutez une classe CSS si nécessaire
                 ]
-            ]);
+            ])
+            ->add('created_at', HiddenType::class)
+            ->add('updated_at', HiddenType::class);
+
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                $template = $event->getData();
+                $form = $event->getForm();
+    
+                if (!$template || null === $template->getId()) {
+                    $form->get('created_at')->setData(new \DateTimeImmutable());
+                }
+                $form->get('updated_at')->setData(new \DateTimeImmutable());
+            });
     }
 
     public function configureOptions(OptionsResolver $resolver): void

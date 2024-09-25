@@ -4,14 +4,17 @@ namespace App\Entity;
 
 use App\Repository\ImageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
 class Image extends Element
 {
     #[ORM\Column(length: 255)]
+    #[Groups(['template:read'])]
     private ?string $src = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['template:read'])]
     private ?string $name = null;
 
     public function getSrc(): ?string
