@@ -1,17 +1,114 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!
-{% endblock %}
 
 {% block body %}
-	<h1>Welcome to the Home Page!</h1>
+	<div class="mx-24 mt-14">
+		<h1 class="font-sans text-primary font-bold text-2xl">
+			Crée votre template</h1>
+		<p class="mt-5 font-sans text-orangeCustom font-bold">
+			Templates récents</p>
 
-	<h2>Available Fonts:</h2>
-	<ul>
-		{% for font in fonts %}
-			<li>{{ font.family }}
-				(Category:
-				{{ font.category }})</li>
-		{% endfor %}
-	</ul>
+		<div class="flex w-100 mt-10">
+			{% for template in templates|slice(0, 6) %}
+				<div class="w-1/4 h-44 mr-4 rounded-lg overflow-hidden flex items-center justify-center">
+					<img class="rounded-lg" src="{{ asset('images/smile.jpg') }}" alt="Logo">
+				</div>
+			{% endfor %}
+
+
+		</div>
+		<hr class="mt-10 border-t-1 border-orangeCustom">
+
+		<div class="my-10">
+
+			{% for template in templates %}
+
+				<div class="flex flex-row items-center justify-between mt-2">
+					<div class="flex flex-row">
+						<div class="w-16">
+							<img class="rounded-lg" src="{{ asset('images/placeholder.jpg') }}" alt="Logo">
+						</div>
+						<div class="ml-4">
+							<p class="text-primary font-bold font-sans">{{ template.name }}</p>
+							<p class="text-orangeCustom text-xs">Créer il y a 2 jours</p>
+						</div>
+					</div>
+					<div>
+						<button class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-primary">Edit</button>
+
+						<button class="bg-orangeCustom text-white px-4 py-2 rounded-lg" onclick="openModal('{{ template.id }}')">Delete</button>
+
+					</div>
+				</div>
+
+			{% endfor %}
+			<div
+				id="deleteModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+				<!-- Background backdrop -->
+				<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+				<div class="flex items-center justify-center min-h-screen p-4 text-center">
+					<div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+						<div class="bg-white px-4 py-5 sm:p-6">
+							<div class="mt-3 text-center">
+								<h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Supprimer le Template</h3>
+								<div class="mt-2">
+									<p class="text-sm text-gray-500">Êtes-vous sûr de vouloir supprimer ce template ? Cette action est irréversible.</p>
+								</div>
+							</div>
+							<div class="flex justify-end mt-4">
+								<button id="confirmDelete" class="bg-red-600 text-white px-4 py-2 rounded-lg">Supprimer</button>
+								<button class="ml-2 text-gray-500" onclick="closeModal()">Annuler</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+
+	</div>
+
+	<script>
+		let templateIdToDelete = null;
+
+function openModal(templateId) {
+templateIdToDelete = templateId; // Store the template ID to delete
+document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function closeModal() {
+document.getElementById('deleteModal').classList.add('hidden');
+}
+
+document.getElementById('confirmDelete').addEventListener('click', function () {
+if (templateIdToDelete) {
+fetch (`/template/${templateIdToDelete}`, {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json'
+},
+body: JSON.stringify(
+{id: templateIdToDelete}
+)
+}).then(response => response.json()).then(data => {
+if (data.success) {
+alert('Template supprimé avec succès.');
+// Optionally, you can refresh the page or remove the template from the UI
+location.reload(); // Reloads the page
+} else {
+alert('Une erreur s\'est produite lors de la suppression du template.');
+}
+}).catch(error => {
+console.error('Erreur lors de la suppression du template:', error);
+alert('Une erreur est survenue.');
+});
+
+closeModal(); // Close the modal after initiating the deletion
+}
+});
+	</script>
+
+
 {% endblock %}
