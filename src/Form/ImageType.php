@@ -16,9 +16,12 @@ class ImageType extends ElementType
     {
         parent::buildForm($builder, $options);
         $builder
-            ->add('src')
-            ->add('name')
-            ->add('submit', SubmitType::class)
+            ->add('src', null, [
+                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+            ])
+            ->add('name', null, [
+                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+            ])
         ;
     }
 

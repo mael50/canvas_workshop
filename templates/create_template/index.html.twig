@@ -4,24 +4,29 @@
 {% endblock %}
 
 {% block body %}
-	<section>
-		<h1>Create a new template</h1>
-		<div class="left-column">
-			<p>Template</p>
-			<a href="#" class="btn btn-primary">Changer de template</a>
-			<div class="tab-pane">
-				<div id="form-container" data-controller="element-manager" data-element-manager-target="formContainer"></div>
-				{{ form(form) }}
+	<section data-controller="form" class="p-6 bg-gray-100">
+		<h1 class="text-2xl font-bold mb-4">Create a new template</h1>
+		<div class="flex">
+			<div class="w-1/2 pr-4">
+				<p class="mb-2">Template</p>
+				<a href="#" class="btn btn-primary bg-blue-500 text-white py-2 px-4 rounded mb-4">Changer de template</a>
+				<div class="tab-pane bg-white p-4 rounded shadow">
+					<div>
+						<turbo-frame
+							id="formContainer" data-form-target="formContainer" class="w-full"><!-- Le formulaire sera injecté ici -->
+						</turbo-frame>
+					</div>
 				</div>
 			</div>
 
-			<div class="right-column">
-				<div id="elements">
-					<div class="element" data-type="image" draggable="true">Image</div>
-					<div class="element" data-type="qrcode" draggable="true">QR Code</div>
-					<div class="element" data-type="text" draggable="true">Texte</div>
+			<div class="w-1/2 pl-4">
+				<div class="mb-4">
+					<button data-action="click->form#loadForm" data-url="{{ path('form_image') }}" class="bg-green-500 text-white py-2 px-4 rounded mb-2">Ajouter Image</button>
+					<button data-action="click->form#loadForm" data-url="{{ path('form_qrcode') }}" class="bg-green-500 text-white py-2 px-4 rounded mb-2">Ajouter QR Code</button>
+					<button data-action="click->form#loadForm" data-url="{{ path('form_text') }}" class="bg-green-500 text-white py-2 px-4 rounded">Ajouter Texte</button>
 				</div>
-				<div id="canvas" data-controller="element-manager"><!-- Zone de drop pour le canvas --></div>
+				<div id="canvas" data-controller="element-manager" class="bg-white p-4 rounded shadow"><!-- Zone de drop pour le canvas --></div>
 			</div>
-		</section>
-	{% endblock %}
+		</div>
+	</section>
+{% endblock %}

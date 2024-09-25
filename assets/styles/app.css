@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    background-color: skyblue;
+body {}
+
+/* Styles globaux pour les formulaires */
+form input {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+    @apply block w-full text-gray-700;
+}
+
+form label {
+    @apply block text-sm font-medium text-gray-700;
+}
+
+form button {
+    @apply bg-blue-500 text-white py-2 px-4 rounded;
 }
