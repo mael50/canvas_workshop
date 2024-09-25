@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!
+{% endblock %}
+
+{% block body %}
+	<h1>Welcome to the Home Page!</h1>
+
+	<h2>Available Fonts:</h2>
+	<ul>
+		{% for font in fonts %}
+			<li>{{ font.family }}
+				(Category:
+				{{ font.category }})</li>
+		{% endfor %}
+	</ul>
+{% endblock %}
