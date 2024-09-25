@@ -2,88 +2,45 @@
 
 
 {% block body %}
-<div class="mx-20 mt-14">
+<div class="mx-24 mt-14">
     <h1 class="font-sans text-primary font-bold text-2xl"> Crée votre template</h1>
     <p class="mt-5 font-sans text-orangeCustom font-bold"> Templates récents</p>
 
     <div class="flex w-100 mt-10">
-        <div class="w-1/4 h-44 mr-4 rounded-lg overflow-hidden flex items-center justify-center">
-            <img class="rounded-lg" src="{{ asset('images/smile.jpg') }}" alt="Logo">
-        </div>
-        <div class="w-1/4 h-44 mr-4 rounded-lg overflow-hidden flex items-center justify-center">
-            <img class="rounded-lg" src="{{ asset('images/smile.jpg') }}" alt="Logo">
-        </div>
-        <div class="w-1/4 h-44 mr-4 rounded-lg overflow-hidden flex items-center justify-center">
-            <img class="rounded-lg" src="{{ asset('images/smile.jpg') }}" alt="Logo">
-        </div>
-        <div class="w-1/4 h-44 mr-4 rounded-lg overflow-hidden flex items-center justify-center">
-            <img class="rounded-lg" src="{{ asset('images/smile.jpg') }}" alt="Logo">
-        </div>
-        <div class="w-1/4 h-44 mr-4 rounded-lg overflow-hidden flex items-center justify-center">
-            <img class="rounded-lg" src="{{ asset('images/smile.jpg') }}" alt="Logo">
-        </div>
+        {% for template in templates|slice(0, 6) %}
+            <div class="w-1/4 h-44 mr-4 rounded-lg overflow-hidden flex items-center justify-center">
+                <img class="rounded-lg" src="{{ asset('images/smile.jpg') }}" alt="Logo">
+            </div>
+        {% endfor %}
+
+
+
 
     </div>
+    <hr class="mt-10 border-t-1 border-orangeCustom">
 
-    <div class="mt-10">
+    <div class="my-10">
 
-        <div class="flex flex-row items-center justify-between">
-            <div class="flex flex-row">
-                <div class="w-16">
-                    <img class="rounded-lg" src="{{ asset('images/placeholder.jpg') }}" alt="Logo">
-                </div>
-                <div class="ml-4">
-                    <p class="text-primary font-bold font-sans">Titre</p>
-                    <p class="text-orangeCustom text-xs">Créer il y a 2 jours</p>
-                </div>
-            </div>
-            <div>
-                <button class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-primary">Edit</button>
-            </div>
-        </div>
+        {% for template in templates %}
 
-        <div class="flex flex-row items-center justify-between mt-5">
-            <div class="flex flex-row">
-                <div class="w-16">
-                    <img class="rounded-lg" src="{{ asset('images/placeholder.jpg') }}" alt="Logo">
+            <div class="flex flex-row items-center justify-between mt-2">
+                <div class="flex flex-row">
+                    <div class="w-16">
+                        <img class="rounded-lg" src="{{ asset('images/placeholder.jpg') }}" alt="Logo">
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-primary font-bold font-sans">{{ template.name }}</p>
+                        <p class="text-orangeCustom text-xs">Créer il y a 2 jours</p>
+                    </div>
                 </div>
-                <div class="ml-4">
-                    <p class="text-primary font-bold font-sans">Titre</p>
-                    <p class="text-orangeCustom text-xs">Créer il y a 2 jours</p>
-                </div>
-            </div>
-            <div>
-                <button class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-primary">Edit</button>
-            </div>
-        </div>
-        <div class="flex flex-row items-center justify-between mt-5">
-            <div class="flex flex-row">
-                <div class="w-16">
-                    <img class="rounded-lg" src="{{ asset('images/placeholder.jpg') }}" alt="Logo">
-                </div>
-                <div class="ml-4">
-                    <p class="text-primary font-bold font-sans">Titre</p>
-                    <p class="text-orangeCustom text-xs">Créer il y a 2 jours</p>
+                <div>
+                    <button class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-primary">Edit</button>
                 </div>
             </div>
-            <div>
-                <button class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-primary">Edit</button>
-            </div>
-        </div>
-        <div class="flex flex-row items-center justify-between mt-5">
-            <div class="flex flex-row">
-                <div class="w-16">
-                    <img class="rounded-lg" src="{{ asset('images/placeholder.jpg') }}" alt="Logo">
-                </div>
-                <div class="ml-4">
-                    <p class="text-primary font-bold font-sans">Titre</p>
-                    <p class="text-orangeCustom text-xs">Créer il y a 2 jours</p>
-                </div>
-            </div>
-            <div>
-                <button class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-primary">Edit</button>
-            </div>
-        </div>
+        {% endfor %}
+
+
+
 
     </div>
 

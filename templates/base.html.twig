@@ -12,9 +12,7 @@
         {% endblock %}
     </head>
     <body class="bg-clear">
-        <header>
-            {{ include('header.html.twig') }}
-        </header>
+        {% include('header.html.twig') %}
         {% block body %}{% endblock %}
     </body>
 </html>
