@@ -16,14 +16,30 @@ class TextType extends ElementType
     {
         parent::buildForm($builder, $options);
         $builder
-            ->add('textColor')
-            ->add('backgroundColor')
-            ->add('placeholder')
-            ->add('align')
-            ->add('bold')
-            ->add('italic')
-            ->add('fontSize')
-            ->add('submit', SubmitType::class)
+            ->add('textColor', null, [
+                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+            ])
+            ->add('backgroundColor', null, [
+                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+            ])
+            ->add('placeholder', null, [
+                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+            ])
+            ->add('align', null, [
+                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+            ])
+            ->add('bold', null, [
+                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+            ])
+            ->add('italic', null, [
+                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+            ])
+            ->add('fontSize', null, [
+                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+            ])
+            ->add('fontFamily', null, [
+                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+            ])
         ;
     }
 

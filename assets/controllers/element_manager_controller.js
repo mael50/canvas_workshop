@@ -21,7 +21,9 @@ export default class extends Controller {
         elements.forEach((element) => {
             element.addEventListener('click', (event) => {
                 const type = element.getAttribute('data-type');
-                this.loadForm(type);
+                // set hidden input value to type
+                const hiddenInput = document.getElementById('element_type');
+                hiddenInput.value = type;
             });
         });
 
