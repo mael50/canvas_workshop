@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Image;
 use App\Form\TextType;
 use App\Form\ImageType;
 use App\Entity\Template;
 use App\Form\QRCodeType;
 use App\Form\ElementType;
 use App\Form\TemplateType;
+use App\Service\ImageStorage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +18,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CreateTemplateController extends AbstractController
 {
+    private $imageStorage;
+
+    public function __construct(ImageStorage $imageStorage)
+    {
+        $this->imageStorage = $imageStorage;
+    }
+
+
     #[Route('/create-template', name: 'create_template')]
     public function createTemplate(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -42,7 +52,20 @@ class CreateTemplateController extends AbstractController
         }
 
         if ($imageForm->isSubmitted() && $imageForm->isValid()) {
-            $entityManager->persist($imageForm->getData());
+            $image = $imageForm->getData();
+
+            // Récupérer le fichier uploadé
+            $uploadedFile = $imageForm->get('src')->getData();
+
+            if ($uploadedFile) {
+                // Utiliser le service imageStorage pour stocker le fichier
+                $newFileName = $this->imageStorage->storeFile($uploadedFile);
+
+                // Mettre à jour le chemin du fichier dans l'entité Image
+                $image->setSrc($newFileName);
+            }
+
+            $entityManager->persist($image);
             $entityManager->flush();
 
             return $this->redirectToRoute('create_template');

@@ -17,15 +17,11 @@ class ImageStorage
     public function storeFile(UploadedFile $file): string
     {
         $fileName = md5(uniqid()) . '.' . $file->guessExtension();
-
-        try {
-            $file->move($this->getTargetDirectory(), $fileName);
-        } catch (FileException $e) {
-            throw new FileException('An error occurred while uploading your file');
-        }
+        $file->move($this->getTargetDirectory(), $fileName);
 
         return $fileName;
     }
+
 
     public function deleteFile(string $fileName): void
     {
