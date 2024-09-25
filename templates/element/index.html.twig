@@ -1,48 +1,57 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier la position de l'élément {{ element.id }}{% endblock %}
+{% block title %}Modifier la position des éléments{% endblock %}
 
 {% block body %}
 <style>
-    #element {
+    .element {
         position: absolute;
-        width: {{ element.width }}px;
-        height: {{ element.height }}px;
-        left: {{ element.posX }}px;
-        top: {{ element.posY }}px;
-        background-color: lightblue;
         border: 1px solid #000;
         cursor: move;
+        background-color: lightblue;
     }
 </style>
 
 <div class="example-wrapper">
-    <h1>Déplacer l'élément {{ element.id }}</h1>
+    <h1>Déplacer les éléments</h1>
 
-    <div id="element" draggable="true" data-id="{{ element.id }}">
-        {{ element.inputAssocie }}
+    <div id="canvas">
+        {% for element in elements %}
+            <div class="element" id="element-{{ element.id }}" data-id="{{ element.id }}" draggable="true"
+                 style="width: {{ element.width }}px; height: {{ element.height }}px;
+                        left: {{ element.posX }}px; top: {{ element.posY }}px;">
+                {{ element.inputAssocie }}
+            </div>
+        {% endfor %}
     </div>
 </div>
 
 <script>
-    const element = document.getElementById('element');
-    
-    // Permettre le drag
-    element.addEventListener('dragstart', function(e) {
-        e.dataTransfer.setData("text/plain", null); // Autoriser le drag
-    });
+    document.querySelectorAll('.element').forEach(function(element) {
+        let currentPosX = parseFloat(element.style.left); // Position actuelle X
+        let currentPosY = parseFloat(element.style.top);  // Position actuelle Y
 
-    // Déplacement de l'élément
-    element.addEventListener('dragend', function(e) {
-        const newPosX = e.pageX - (element.offsetWidth / 2); // Nouvelle position X
-        const newPosY = e.pageY - (element.offsetHeight / 2); // Nouvelle position Y
+        // Permettre le drag
+        element.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData("text/plain", null); // Autoriser le drag
+        });
 
-        // Appliquer les nouvelles positions dans le style
-        element.style.left = newPosX + 'px';
-        element.style.top = newPosY + 'px';
+        // Déplacement de l'élément
+        element.addEventListener('dragend', function(e) {
+            const newPosX = e.pageX - (element.offsetWidth / 2); // Nouvelle position X
+            const newPosY = e.pageY - (element.offsetHeight / 2); // Nouvelle position Y
 
-        // Fonction AJAX pour mettre à jour en base de données
-        updatePosition(element.dataset.id, newPosX, newPosY);
+            // Mettre à jour les variables de position
+            currentPosX = newPosX;
+            currentPosY = newPosY;
+
+            // Appliquer les nouvelles positions dans le style
+            element.style.left = newPosX + 'px';
+            element.style.top = newPosY + 'px';
+
+            // Sauvegarder immédiatement la nouvelle position
+            updatePosition(element.dataset.id, currentPosX, currentPosY);
+        });
     });
 
     // Fonction AJAX pour mettre à jour la position en base de données
@@ -62,9 +71,9 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                console.log('Position mise à jour avec succès');
+                console.log('Position de l\'élément ' + id + ' sauvegardée avec succès');
             } else {
-                console.error('Erreur lors de la mise à jour de la position');
+                console.error('Erreur lors de la sauvegarde de la position');
             }
         })
         .catch(error => console.error('Erreur AJAX:', error));
