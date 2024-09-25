@@ -10,23 +10,52 @@
 			<div class="w-1/2 pr-4">
 				<p class="mb-2">Template</p>
 				<a href="#" class="btn btn-primary bg-blue-500 text-white py-2 px-4 rounded mb-4">Changer de template</a>
-				<div class="tab-pane bg-white p-4 rounded shadow">
-					<div>
-						<turbo-frame
-							id="formContainer" data-form-target="formContainer" class="w-full"><!-- Le formulaire sera injecté ici -->
-						</turbo-frame>
+				<div class="mb-4">
+					<button id="templateEditBtn" class="bg-blue-500 text-white py-2 px-4 rounded mb-2 selected">Template Edit</button>
+					<button id="elementEditBtn" class="bg-blue-500 text-white py-2 px-4 rounded mb-2">Element Edit</button>
+				</div>
+				<div id="templateEditPane" class="tab-pane bg-white p-4 rounded shadow">
+					{{ form(form) }}
+					</div>
+					<div id="elementEditPane" class="tab-pane bg-white p-4 rounded shadow hidden">
+						<div>
+							<turbo-frame
+								id="formContainer" data-form-target="formContainer" class="w-full"><!-- Le formulaire sera injecté ici -->
+							</turbo-frame>
+						</div>
+					</div>
+				</div>
+
+				<div class="w-1/2 pl-4">
+					<div class="mb-4">
+						<button data-action="click->form#loadForm" data-url="{{ path('form_image') }}" class="bg-green-500 text-white py-2 px-4 rounded mb-2">Ajouter Image</button>
+						<button data-action="click->form#loadForm" data-url="{{ path('form_qrcode') }}" class="bg-green-500 text-white py-2 px-4 rounded mb-2">Ajouter QR Code</button>
+						<button data-action="click->form#loadForm" data-url="{{ path('form_text') }}" class="bg-green-500 text-white py-2 px-4 rounded">Ajouter Texte</button>
+					</div>
+					<div
+						id="canvas" data-controller="element-manager" class="bg-white p-4 rounded shadow"><!-- Zone de drop pour le canvas -->
 					</div>
 				</div>
 			</div>
+			<!-- Fermeture de la balise .flex -->
+		</section>
 
-			<div class="w-1/2 pl-4">
-				<div class="mb-4">
-					<button data-action="click->form#loadForm" data-url="{{ path('form_image') }}" class="bg-green-500 text-white py-2 px-4 rounded mb-2">Ajouter Image</button>
-					<button data-action="click->form#loadForm" data-url="{{ path('form_qrcode') }}" class="bg-green-500 text-white py-2 px-4 rounded mb-2">Ajouter QR Code</button>
-					<button data-action="click->form#loadForm" data-url="{{ path('form_text') }}" class="bg-green-500 text-white py-2 px-4 rounded">Ajouter Texte</button>
-				</div>
-				<div id="canvas" data-controller="element-manager" class="bg-white p-4 rounded shadow"><!-- Zone de drop pour le canvas --></div>
-			</div>
-		</div>
-	</section>
-{% endblock %}
+		<script>
+			document.getElementById('templateEditBtn').addEventListener('click', function () {
+document.getElementById('templateEditPane').classList.remove('hidden');
+document.getElementById('elementEditPane').classList.add('hidden');
+document.getElementById('templateEditBtn').classList.add('selected');
+document.getElementById('elementEditBtn').classList.remove('selected');
+});
+
+document.getElementById('elementEditBtn').addEventListener('click', function () {
+document.getElementById('elementEditPane').classList.remove('hidden');
+document.getElementById('templateEditPane').classList.add('hidden');
+document.getElementById('elementEditBtn').classList.add('selected');
+document.getElementById('templateEditBtn').classList.remove('selected');
+});
+
+// Sélectionner le bouton "Template Edit" par défaut
+document.getElementById('templateEditBtn').click();
+		</script>
+	{% endblock %}

@@ -19,3 +19,8 @@ form label {
 form button {
     @apply bg-blue-500 text-white py-2 px-4 rounded;
 }
+
+.selected {
+    background-color: #1d4ed8;
+    /* Couleur différente pour indiquer la sélection */
+}
