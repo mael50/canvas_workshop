@@ -16,7 +16,15 @@
 						<button id="templateEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2 selected">Template Edit</button>
 						<button id="elementEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2">Element Edit</button>
 					</div>
-					{{ form(form) }}
+					{{ form_start(form) }}
+					{{ form_widget(form) | raw }}
+					<label for="color" class="text-white mt-2">Couleur :</label>
+					<div class="flex items-center flex-row flex-wrap gap-3 mt-3">
+						{% for color in template.color %}
+							<input type="color" name="color" value="{{ color }}" class="w-8 h-8" disabled>
+						{% endfor %}
+					</div>
+					{{ form_end(form) }}
 				</div>
 				<div id="elementEditPane" class="tab-pane bg-secondary p-4 rounded shadow hidden mt-5">
 					<div class="flex">
@@ -34,18 +42,24 @@
 			<div class="w-2/3 pl-4">
 				<div class="flex mb-4 justify-around">
 					<button data-action="click->form#loadForm" data-url="{{ path('form_image') }}" class="bg-orangeCustom
-					 text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
-						<img src="{{ asset('images/image.png') }}" alt="Ajouter Image" class="h-14 mb-1"> <!-- Ajuster la hauteur de l'image -->
+																																																																																																																																																																																																																																																 text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
+						<img
+						src="{{ asset('images/image.png') }}" alt="Ajouter Image" class="h-14 mb-1">
+						<!-- Ajuster la hauteur de l'image -->
 						Ajouter Image
 					</button>
 
 
 					<button data-action="click->form#loadForm" data-url="{{ path('form_qrcode') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
-						<img src="{{ asset('images/qrCode.png') }}" alt="Ajouter QrCode" class="h-14 mb-1"> <!-- Image ajoutée au-dessus -->
+						<img
+						src="{{ asset('images/qrCode.png') }}" alt="Ajouter QrCode" class="h-14 mb-1">
+						<!-- Image ajoutée au-dessus -->
 						Ajouter QR Code
 					</button>
 					<button data-action="click->form#loadForm" data-url="{{ path('form_text') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
-						<img src="{{ asset('images/text.png') }}" alt="Ajouter Text" class="h-14 mb-1"> <!-- Image ajoutée au-dessus -->
+						<img
+						src="{{ asset('images/text.png') }}" alt="Ajouter Text" class="h-14 mb-1">
+						<!-- Image ajoutée au-dessus -->
 						Ajouter Texte
 					</button>
 				</div>
@@ -54,8 +68,8 @@
 				</div>
 			</div>
 		</div>
-			<!-- Fermeture de la balise .flex -->
-		</section>
+		<!-- Fermeture de la balise .flex -->
+	</section>
 
 	<style>
 		.selected {
@@ -64,31 +78,29 @@
 		}
 	</style>
 
-		<script>
-			var templateEditBtn1 = document.getElementById('templateEditBtn1');
-			var elementEditBtn1 = document.getElementById('elementEditBtn1');
+	<script>
+		var templateEditBtn1 = document.getElementById('templateEditBtn1');
+var elementEditBtn1 = document.getElementById('elementEditBtn1');
 
-			var templateEditBtn = document.getElementById('templateEditBtn');
-			var elementEditBtn = document.getElementById('elementEditBtn');
-			var templateEditPane = document.getElementById('templateEditPane');
-			var elementEditPane = document.getElementById('elementEditPane');
+var templateEditBtn = document.getElementById('templateEditBtn');
+var elementEditBtn = document.getElementById('elementEditBtn');
+var templateEditPane = document.getElementById('templateEditPane');
+var elementEditPane = document.getElementById('elementEditPane');
 
-			templateEditBtn1.addEventListener('click', function () {
-				templateEditPane.classList.remove('hidden');
-				elementEditPane.classList.add('hidden');
-				templateEditBtn.classList.add('selected');
-				elementEditBtn.classList.remove('selected');
-			});
-			elementEditBtn.addEventListener('click', function () {
-				elementEditPane.classList.remove('hidden');
-				templateEditPane.classList.add('hidden');
-				elementEditBtn.classList.add('selected');
-				templateEditBtn.classList.remove('selected');
-			});
+templateEditBtn1.addEventListener('click', function () {
+templateEditPane.classList.remove('hidden');
+elementEditPane.classList.add('hidden');
+templateEditBtn.classList.add('selected');
+elementEditBtn.classList.remove('selected');
+});
+elementEditBtn.addEventListener('click', function () {
+elementEditPane.classList.remove('hidden');
+templateEditPane.classList.add('hidden');
+elementEditBtn.classList.add('selected');
+templateEditBtn.classList.remove('selected');
+});
 
-			templateEditBtn.click();
-
-
+templateEditBtn.click();
 	</script>
 	<style>
 		.slider {
@@ -136,6 +148,5 @@
 		output {
 			color: #fff;
 		}
-
 	</style>
-	{% endblock %}
+{% endblock %}

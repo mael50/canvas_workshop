@@ -16,7 +16,7 @@ export default class extends Controller {
             .then(html => {
                 this.formContainerTarget.innerHTML = html;
             })
-            .then(() =>{
+            .then(() => {
                 this.setIntoElementEdit();
             })
             .then(() => {
@@ -24,7 +24,7 @@ export default class extends Controller {
                 this.checkAndGenerateQrCode();
             });
     }
-    setIntoElementEdit(){
+    setIntoElementEdit() {
         document.getElementById('elementEditPane').classList.remove('hidden');
         document.getElementById('templateEditPane').classList.add('hidden');
         document.getElementById('elementEditBtn').classList.add('selected');

@@ -100,6 +100,7 @@ class CreateTemplateController extends AbstractController
             'imageForm' => $imageForm->createView(),
             'textForm' => $textForm->createView(),
             'qrCodeForm' => $qrCodeForm->createView(),
+            'template' => $template,
         ]);
     }
 }

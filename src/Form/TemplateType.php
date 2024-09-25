@@ -3,10 +3,13 @@
 namespace App\Form;
 
 use App\Entity\Color;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Template;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Twig\Markup;
 
 class TemplateType extends AbstractType
 {
@@ -38,24 +41,13 @@ class TemplateType extends AbstractType
                     'value' => '123',
                     'class' => 'form-control rounded-md shadow-sm  focus:secondary'
                 ]
-            ])
-            ->add('color', EntityType::class, [
-                'class' => Color::class,
-                'label' => 'Couleur:',
-                'multiple' => true,
-                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
-                'attr' => [
-                    'readonly' => true,
-                    'value' => '#1234 + #1124',
-                    'class' => 'form-control rounded-md shadow-sm focus:secondary'
-                ]
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Vous pouvez définir l'entité associée ici si nécessaire
+            'data_class' => Template::class,
         ]);
     }
 }
