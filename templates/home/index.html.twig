@@ -1,10 +1,9 @@
 {% extends 'base.html.twig' %}
 
-
 {% block body %}
 	<div class="mx-24 mt-14">
 		<h1 class="font-sans text-primary font-bold text-2xl">
-			Crée votre template</h1>
+			Créer votre template</h1>
 		<p class="mt-5 font-sans text-orangeCustom font-bold">
 			Templates récents</p>
 
@@ -14,15 +13,11 @@
 					<img class="rounded-lg" src="{{ asset('images/smile.jpg') }}" alt="Logo">
 				</div>
 			{% endfor %}
-
-
 		</div>
 		<hr class="mt-10 border-t-1 border-orangeCustom">
 
 		<div class="my-10">
-
 			{% for template in templates %}
-
 				<div class="flex flex-row items-center justify-between mt-2">
 					<div class="flex flex-row">
 						<div class="w-16">
@@ -34,19 +29,15 @@
 						</div>
 					</div>
 					<div>
-						<button class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-primary">Edit</button>
-
-						<button class="bg-orangeCustom text-white px-4 py-2 rounded-lg" onclick="openModal('{{ template.id }}')">Delete</button>
-
+						<button class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-primary" onclick="window.location.href='/create-template/{{ template.id }}'">Modifier</button>
+						<button class="bg-orangeCustom text-white px-4 py-2 rounded-lg" onclick="openModal('{{ template.id }}')">Supprimer</button>
 					</div>
 				</div>
-
 			{% endfor %}
 			<div
 				id="deleteModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
 				<!-- Background backdrop -->
 				<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-
 				<div class="flex items-center justify-center min-h-screen p-4 text-center">
 					<div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
 						<div class="bg-white px-4 py-5 sm:p-6">
@@ -64,21 +55,19 @@
 					</div>
 				</div>
 			</div>
-
-
 		</div>
-
 	</div>
 
 	<script>
-		let templateIdToDelete = null;
+		(function () {
+let templateIdToDelete = null;
 
-function openModal(templateId) {
+window.openModal = function (templateId) {
 templateIdToDelete = templateId; // Store the template ID to delete
 document.getElementById('deleteModal').classList.remove('hidden');
 }
 
-function closeModal() {
+window.closeModal = function () {
 document.getElementById('deleteModal').classList.add('hidden');
 }
 
@@ -108,7 +97,6 @@ alert('Une erreur est survenue.');
 closeModal(); // Close the modal after initiating the deletion
 }
 });
+})();
 	</script>
-
-
 {% endblock %}

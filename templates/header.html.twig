@@ -2,13 +2,15 @@
 <header class="bg-secondary">
 	<div class="flex flex-row justify-between items-center p-4">
 
-		<img src="{{ asset('images/logo_blanc.png') }}" alt="Logo" style="width: 250px">
+		<a href="/">
+			<img src="{{ asset('images/logo_blanc.png') }}" alt="Logo" style="width: 250px">
+		</a>
 
 		<div
 			class="flex w-1/4 flex justify-around">
 			<!-- 50% de la largeur parent -->
-			<a href="" class="text-white">EXPLORER</a>
-			<a href="#" id="openModalBtn" class="text-white">CRÉER</a>
+			<a href="/" class="text-white">EXPLORER</a>
+			<button id="openModalBtn" class="text-white">CRÉER</button>
 
 		</div>
 
@@ -78,7 +80,8 @@
 
 	<!-- JavaScript -->
 	<script>
-		const openModalBtn = document.getElementById('openModalBtn');
+		(function () {
+const openModalBtn = document.getElementById('openModalBtn');
 const modal = document.getElementById('modal');
 const closeModalBtn = document.getElementById('closeModalBtn');
 
@@ -99,17 +102,17 @@ if (event.target === modal) {
 modal.classList.add('hidden');
 }
 });
+})();
 	</script>
 
-
 	<script>
-		fetch('/colors', {
+		(function () {
+fetch('/colors', {
 method: 'GET',
 headers: {
 'Content-Type': 'application/json'
 }
 }).then(response => response.json()).then(colors => {
-console.log('Couleurs récupérées:', colors);
 
 const colorCountSelect = document.getElementById('colorCount');
 
@@ -125,9 +128,12 @@ colorCountSelect.appendChild(option);
 }).catch(error => {
 console.error('Erreur lors de la récupération des couleurs:', error);
 });
+})();
 	</script>
+
 	<script>
-		const colorCountSelect = document.getElementById('colorCount');
+		(function () {
+const colorCountSelect = document.getElementById('colorCount');
 const colorOptionsDiv = document.getElementById('colorOptions');
 
 colorCountSelect.addEventListener('change', function () {
@@ -141,9 +147,7 @@ headers: {
 'Content-Type': 'application/json'
 }
 }).then(response => response.json()).then(colors => {
-
 const combinations = getColorCombinations(colors, colorCount);
-
 
 combinations.forEach((combination, index) => {
 const colorOptionDiv = document.createElement('div');
@@ -210,10 +214,12 @@ result.pop();
 combine(colors, colorCount, 0, []);
 return combinations;
 }
+})();
 	</script>
 
 	<script>
-		document.getElementById('templateForm').addEventListener('submit', function (event) {
+		(function () {
+document.getElementById('templateForm').addEventListener('submit', function (event) {
 event.preventDefault(); // Empêche la soumission par défaut du formulaire
 
 const name = document.getElementById('name').value;
@@ -243,17 +249,15 @@ headers: {
 'Content-Type': 'application/json'
 },
 body: JSON.stringify(formData)
-}).then(response => response.json()).then(data => {
-console.log(data);
-// Redirect to /create-element/{id} with the new template ID
+}).then(response => response.json()).then(data => { // Redirect to /create-element/{id} with the new template ID
 window.location.href = `/create-template/${
 data.id
 }`;
 }).catch(error => {
 console.error('Erreur lors de la création du template:', error);
-})
-
 });
+});
+})();
 	</script>
 
 </header>

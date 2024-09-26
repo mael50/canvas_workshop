@@ -42,7 +42,6 @@ class CreateTemplateController extends AbstractController
             $template = new Template();
         }
 
-
         $form = $this->createForm(TemplateType::class, $template);
 
         $imageForm = $this->createForm(ImageType::class);
@@ -114,6 +113,7 @@ class CreateTemplateController extends AbstractController
             'imageForm' => $imageForm->createView(),
             'textForm' => $textForm->createView(),
             'qrCodeForm' => $qrCodeForm->createView(),
+            'template' => $template,
         ]);
     }
 }

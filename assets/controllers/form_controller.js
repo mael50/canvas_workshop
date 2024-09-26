@@ -16,7 +16,7 @@ export default class extends Controller {
             .then(html => {
                 this.formContainerTarget.innerHTML = html;
             })
-            .then(() =>{
+            .then(() => {
                 this.setIntoElementEdit();
             })
             .then(() => {
@@ -24,7 +24,7 @@ export default class extends Controller {
                 this.checkAndGenerateQrCode();
             });
     }
-    setIntoElementEdit(){
+    setIntoElementEdit() {
         document.getElementById('elementEditPane').classList.remove('hidden');
         document.getElementById('templateEditPane').classList.add('hidden');
         document.getElementById('elementEditBtn').classList.add('selected');
@@ -33,7 +33,6 @@ export default class extends Controller {
 
     showRangeValue() {
         const ranges = this.formContainerTarget.querySelectorAll("input[type=range]");
-        console.log(ranges);
         ranges.forEach(range => {
             const label = range.previousElementSibling;
             const output = document.createElement("output");
@@ -55,7 +54,6 @@ export default class extends Controller {
 
     checkAndGenerateQrCode() {
         const form = this.formContainerTarget.querySelector("form");
-        console.log(form.name);
         if (form && form.name === "qr_code") {
             const qrCodeInput = form.querySelector("#qr_code_text");
             if (qrCodeInput) {
@@ -66,7 +64,6 @@ export default class extends Controller {
 
     generateQrCode() {
         const text = this.formContainerTarget.querySelector("#qr_code_text").value;
-        console.log(text);
         if (!text) {
             return;
         }
