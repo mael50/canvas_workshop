@@ -7,7 +7,6 @@ export default class extends Controller {
         event.preventDefault();
         const url = event.currentTarget.dataset.url;
 
-
         fetch(url, {
             headers: {
                 "Turbo-Frame": "formContainer"  // Cible le bon frame
@@ -17,16 +16,15 @@ export default class extends Controller {
             .then(html => {
                 this.formContainerTarget.innerHTML = html;
             })
-            .then(() =>{
+            .then(() => {
                 this.setIntoElementEdit();
             })
             .then(() => {
                 this.showRangeValue();
+                this.checkAndGenerateQrCode();
             });
-
-
     }
-    setIntoElementEdit(){
+    setIntoElementEdit() {
         document.getElementById('elementEditPane').classList.remove('hidden');
         document.getElementById('templateEditPane').classList.add('hidden');
         document.getElementById('elementEditBtn').classList.add('selected');
@@ -35,12 +33,9 @@ export default class extends Controller {
 
     showRangeValue() {
         const ranges = this.formContainerTarget.querySelectorAll("input[type=range]");
-        console.log(ranges);
         ranges.forEach(range => {
-            // get range label
             const label = range.previousElementSibling;
             const output = document.createElement("output");
-            // créer une div qui contient label et output, en flex row
             const div = document.createElement("div");
             div.style.display = "flex";
             div.style.flexDirection = "row";
@@ -50,11 +45,37 @@ export default class extends Controller {
             div.appendChild(output);
 
             range.insertAdjacentElement("beforebegin", div);
-            // range.insertAdjacentElement("beforebegin", output);
             output.innerHTML = range.value;
             range.addEventListener("input", () => {
                 output.innerHTML = range.value;
             });
         });
+    }
+
+    checkAndGenerateQrCode() {
+        const form = this.formContainerTarget.querySelector("form");
+        if (form && form.name === "qr_code") {
+            const qrCodeInput = form.querySelector("#qr_code_text");
+            if (qrCodeInput) {
+                qrCodeInput.addEventListener("input", () => this.generateQrCode());
+            }
+        }
+    }
+
+    generateQrCode() {
+        const text = this.formContainerTarget.querySelector("#qr_code_text").value;
+        if (!text) {
+            return;
+        }
+        fetch(`/generate-qrcode/${encodeURIComponent(text)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(html => {
+                console.log(html);
+            });
     }
 }

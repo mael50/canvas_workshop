@@ -3,10 +3,13 @@
 namespace App\Form;
 
 use App\Entity\Color;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Template;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Twig\Markup;
 
 class TemplateType extends AbstractType
 {
@@ -17,7 +20,6 @@ class TemplateType extends AbstractType
                 'label' => 'Nom:',
                 'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
                 'attr' => [
-                    'value'=> 'Template name',
                     'class' => 'form-control  rounded-md shadow-sm secondary'
                 ]
             ])
@@ -25,8 +27,7 @@ class TemplateType extends AbstractType
                 'label' => 'Largeur:',
                 'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
                 'attr' => [
-                    'readonly' => true  ,
-                    'value'=> '123',
+                    'readonly' => true,
                     'class' => 'form-control  rounded-md shadow-sm  focus:secondary'
                 ]
             ])
@@ -34,18 +35,8 @@ class TemplateType extends AbstractType
                 'label' => 'Hauteur:',
                 'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
                 'attr' => [
-                    'readonly' => true  ,
-                    'value'=> '123',
+                    'readonly' => true,
                     'class' => 'form-control rounded-md shadow-sm  focus:secondary'
-                ]
-            ])
-            ->add('color', null, [
-                'label' => 'Couleur:',
-                'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
-                'attr' => [
-                    'readonly' => true ,
-                    'value'=> '#1234 + #1124',
-                    'class' => 'form-control rounded-md shadow-sm focus:secondary'
                 ]
             ]);
     }
@@ -53,7 +44,7 @@ class TemplateType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Vous pouvez définir l'entité associée ici si nécessaire
+            'data_class' => Template::class,
         ]);
     }
 }
