@@ -16,6 +16,7 @@
 						<button id="elementEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2">Propriété de l'élément</button>
 					</div>
 					{{ form_start(form) }}
+
 					{{ form_widget(form) | raw }}
 					<label for="color" class="text-white mt-2">Couleur :</label>
 					<div class="flex items-center flex-row flex-wrap gap-3 mt-3">
@@ -45,18 +46,18 @@
 						Ajouter Image
 					</button>
 
-					<button data-action="click->form#loadForm" data-url="{{ path('form_qrcode') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
+					<button  data-action="click->form#loadForm" data-url="{{ path('form_qrcode') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
 						<img src="{{ asset('images/qrCode.png') }}" alt="Ajouter QrCode" class="h-14 mb-1">
 						Ajouter QR Code
 					</button>
-					<button data-action="click->form#loadForm" data-url="{{ path('form_text') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
+					<button id="addText" data-action="click->form#loadForm" data-url="{{ path('form_text') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
 						<img src="{{ asset('images/text.png') }}" alt="Ajouter Text" class="h-14 mb-1">
 						Ajouter Texte
 					</button>
 				</div>
 
 				<!-- Ajout d'un bouton pour insérer du texte dans le canevas -->
-				<button id="addText" class="bg-green-500 text-white py-2 px-4 rounded">Ajouter du texte</button>
+				<!--<button id="addText" class="bg-green-500 text-white py-2 px-4 rounded">Ajouter du texte</button>-->
 
 				<div
 					id="canvas" class="canvas-area bg-white p-4 rounded shadow mt-4"><!-- Zone de drop pour le canvas -->
@@ -93,94 +94,176 @@
 			border-radius: 4px;
 		}
 	</style>
-
 	<script>
-		var templateEditBtn1 = document.getElementById('templateEditBtn1');
-var elementEditBtn1 = document.getElementById('elementEditBtn1');
+		document.addEventListener('DOMContentLoaded', function () {
+			// Mode debug : définissez à true pour activer les logs de débogage
+			const debug = true;
 
-var templateEditBtn = document.getElementById('templateEditBtn');
-var elementEditBtn = document.getElementById('elementEditBtn');
-var templateEditPane = document.getElementById('templateEditPane');
-var elementEditPane = document.getElementById('elementEditPane');
+			// Récupération des éléments du DOM pour les boutons et les panneaux
+			var templateEditBtn1 = document.getElementById('templateEditBtn1');
+			var elementEditBtn1 = document.getElementById('elementEditBtn1');
+			var templateEditBtn = document.getElementById('templateEditBtn');
+			var elementEditBtn = document.getElementById('elementEditBtn');
+			var templateEditPane = document.getElementById('templateEditPane');
+			var elementEditPane = document.getElementById('elementEditPane');
+			var uniqIdText = 0;
+			let selectedElement = null; // Variable pour stocker l'élément actuellement sélectionné
 
-templateEditBtn1.addEventListener('click', function () {
-templateEditPane.classList.remove('hidden');
-elementEditPane.classList.add('hidden');
-templateEditBtn.classList.add('selected');
-elementEditBtn.classList.remove('selected');
-});
-elementEditBtn.addEventListener('click', function () {
-elementEditPane.classList.remove('hidden');
-templateEditPane.classList.add('hidden');
-elementEditBtn.classList.add('selected');
-templateEditBtn.classList.remove('selected');
-});
+			// Gestion des événements pour les boutons d'édition du template et des éléments
+			templateEditBtn1.addEventListener('click', function () {
+				templateEditPane.classList.remove('hidden');
+				elementEditPane.classList.add('hidden');
+				templateEditBtn.classList.add('selected');
+				elementEditBtn.classList.remove('selected');
 
-templateEditBtn.click();
+				if (debug) console.log('Template edit pane ouvert');
+			});
+
+			elementEditBtn.addEventListener('click', function () {
+				elementEditPane.classList.remove('hidden');
+				templateEditPane.classList.add('hidden');
+				elementEditBtn.classList.add('selected');
+				templateEditBtn.classList.remove('selected');
+
+				if (debug) console.log('Element edit pane ouvert');
+			});
+
+			// Par défaut, on affiche le panneau d'édition du template
+			templateEditBtn.click();
+
+			// Gestion du drag & drop
+			let canvas = document.getElementById("canvas");
+			let addTextBtn = document.getElementById("addText");
+			let newTop = 0;
+			let newLeft = 0;
+
+			// Événement pour ajouter un nouveau texte au canvas
+			addTextBtn.addEventListener("click", function () {
+				let newText = document.createElement("div");
+				newText.classList.add("draggable");
+				newText.innerText = "Déplacez-moi !";
+
+				// Position par défaut du texte
+				newText.style.position = "absolute"; // Assurez-vous que l'élément est positionné
+				newText.style.top = "0px";
+				newText.style.left = "0px";
+
+				// Génération d'un ID unique pour chaque élément
+				uniqIdText = "text" + Math.random().toString(36).substr(2, 9);
+				newText.id = uniqIdText;
+
+				// Ajout du nouvel élément au canvas
+				canvas.appendChild(newText);
+
+				if (debug) console.log('Nouvel élément ajouté avec ID:', uniqIdText);
+
+				// Rendre l'élément draggable
+				makeDraggable(newText);
+			});
+
+			// Fonction pour rendre un élément draggable
+			function makeDraggable(element) {
+				let isDragging = false;
+				let offsetX, offsetY;
+				let canvasRect = canvas.getBoundingClientRect();
+
+				// Événement lorsque l'utilisateur commence à draguer l'élément
+				element.addEventListener("mousedown", function (e) {
+					isDragging = true;
+					offsetX = e.clientX - parseInt(window.getComputedStyle(element).left);
+					offsetY = e.clientY - parseInt(window.getComputedStyle(element).top);
+
+					if (debug) console.log('Drag commencé sur l\'élément ID:', element.id);
+				});
+
+				// Événement lorsque l'utilisateur déplace la souris
+				document.addEventListener("mousemove", function (e) {
+					if (isDragging) {
+						newLeft = e.clientX - offsetX;
+						newTop = e.clientY - offsetY;
+
+						// Vérifier les limites du canevas
+						let elementRect = element.getBoundingClientRect();
+
+						// Limiter à la zone du canevas
+						if (newLeft < 0) newLeft = 0;
+						if (newTop < 0) newTop = 0;
+						if (newLeft + elementRect.width > canvasRect.width) {
+							newLeft = canvasRect.width - elementRect.width;
+						}
+						if (newTop + elementRect.height > canvasRect.height) {
+							newTop = canvasRect.height - elementRect.height;
+						}
+
+						// Mettre à jour la position de l'élément
+						element.style.left = newLeft + "px";
+						element.style.top = newTop + "px";
+
+						// Mettre à jour les champs de saisie si cet élément est sélectionné
+						if (selectedElement === element) {
+							let sliderValue = Math.round((newLeft / canvasRect.width) * 100);
+							let sliderValueY = Math.round((newTop / canvasRect.height) * 100);
+							document.getElementById('text_posX').value = sliderValue;
+							document.getElementById('text_posY').value = sliderValueY;
+
+							if (debug) console.log('Position mise à jour pour l\'élément sélectionné:', element.id, 'X:', sliderValue, 'Y:', sliderValueY);
+						}
+					}
+				});
+
+				// Événement lorsque l'utilisateur relâche le bouton de la souris
+				document.addEventListener("mouseup", function () {
+					if (isDragging && debug) console.log('Drag terminé sur l\'élément ID:', element.id);
+					isDragging = false;
+				});
+
+				// Événement lorsque l'utilisateur clique sur l'élément
+				element.addEventListener('click', function(event) {
+					selectedElement = this;
+
+					if (debug) console.log('Élément sélectionné:', selectedElement.id);
+
+					// Mettre à jour les champs de saisie avec la position actuelle de l'élément
+					let canvasRect = canvas.getBoundingClientRect();
+					let elementRect = selectedElement.getBoundingClientRect();
+					let posX = Math.round(((elementRect.left - canvasRect.left) / canvasRect.width) * 100);
+					let posY = Math.round(((elementRect.top - canvasRect.top) / canvasRect.height) * 100);
+					document.getElementById('text_posX').value = posX;
+					document.getElementById('text_posY').value = posY;
+
+					if (debug) console.log('Champs de position mis à jour pour l\'élément sélectionné:', 'X:', posX, 'Y:', posY);
+				});
+				document.getElementById('text_posX').addEventListener('input', function() {
+					selectedElement.style.left = this.value + '%';
+				});
+			}
 
 
-// drag & drop //
-let canvas = document.getElementById("canvas");
-let addTextBtn = document.getElementById("addText");
+			// Écouteurs d'événements pour les champs de saisie de position
+			/*document.getElementById('text_posX').addEventListener('input', function() {
+				if (selectedElement) {
+					selectedElement.style.left = this.value + '%';
 
-addTextBtn.addEventListener("click", function () {
-let newText = document.createElement("div");
-newText.classList.add("draggable");
-newText.innerText = "Déplacez-moi !";
+					if (debug) console.log('Position X mise à jour via le champ de saisie pour l\'élément ID:', selectedElement.id, 'Nouvelle valeur:', this.value + '%');
+				} else if (debug) {
+					console.log('Aucun élément sélectionné pour mettre à jour la position X');
+				}
+			});*/
 
-// Position par défaut du texte
-newText.style.top = "50px";
-newText.style.left = "50px";
+			/*document.getElementById('text_posY').addEventListener('input', function() {
+				if (selectedElement) {
+					selectedElement.style.top = this.value + '%';
 
-canvas.appendChild(newText);
+					if (debug) console.log('Position Y mise à jour via le champ de saisie pour l\'élément ID:', selectedElement.id, 'Nouvelle valeur:', this.value + '%');
+				} else if (debug) {
+					console.log('Aucun élément sélectionné pour mettre à jour la position Y');
+				}
+			});*/
 
-makeDraggable(newText);
-});
-
-function makeDraggable(element) {
-let isDragging = false;
-let offsetX,
-offsetY;
-let canvasRect = canvas.getBoundingClientRect();
-
-element.addEventListener("mousedown", function (e) {
-isDragging = true;
-offsetX = e.clientX - parseInt(window.getComputedStyle(element).left);
-offsetY = e.clientY - parseInt(window.getComputedStyle(element).top);
-});
-
-document.addEventListener("mousemove", function (e) {
-if (isDragging) {
-let newLeft = e.clientX - offsetX;
-let newTop = e.clientY - offsetY;
-
-// Vérifier les limites du canevas
-let elementRect = element.getBoundingClientRect();
-
-// Limiter à la zone du canevas
-if (newLeft < 0) 
-newLeft = 0;
-
-if (newTop < 0) 
-newTop = 0;
-
-if (newLeft + elementRect.width > canvasRect.width) {
-newLeft = canvasRect.width - elementRect.width;
-}
-if (newTop + elementRect.height > canvasRect.height) {
-newTop = canvasRect.height - elementRect.height;
-}
-
-element.style.left = newLeft + "px";
-element.style.top = newTop + "px";
-}
-});
-
-document.addEventListener("mouseup", function () {
-isDragging = false;
-});
-}
+		});
 	</script>
+
+
 	<style>
 		.slider {
 			-webkit-appearance: none;
@@ -225,7 +308,7 @@ isDragging = false;
 		}
 
 		output {
-			color: #fff;
+			color: #226D68;
 		}
 	</style>
 {% endblock %}

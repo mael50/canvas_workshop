@@ -17,12 +17,13 @@ class ElementType extends AbstractType
     {
         $builder
             ->add('posX', RangeType::class, [
+
                 'label' => 'Pos X:',
                 'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
                 'attr' => [
                     'class' => 'slider mt-2',
                     'min' => 0,  // Valeur minimale
-                    'max' => 100,  // Valeur maximale
+                    'max' => 83,  // Valeur maximale
                 ],
             ])
             ->add('posY', RangeType::class, [
@@ -32,7 +33,7 @@ class ElementType extends AbstractType
                 'attr' => [
                     'class' => 'slider mt-2',
                     'min' => 0,  // Valeur minimale
-                    'max' => 100,  // Valeur maximale
+                    'max' => 83,  // Valeur maximale
                 ],
             ])
             ->add('width', RangeType::class, [
