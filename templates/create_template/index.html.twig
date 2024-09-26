@@ -1,171 +1,371 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Create template
-{% endblock %}
+{% block title %}Create template{% endblock %}
 
 {% block body %}
-	<section data-controller="form" class="p-6 bg-gray-100">
-		<h1 class="text-2xl font-bold mb-4 text-primary">Modifiez votre template</h1>
-		<div class="flex">
-			<div class="w-1/3 pr-4 ml-10">
-				<a href="/" class="rounded-lg border border-secondary px-4 py-2 text-primary font-bold">Changer de template</a>
+<section data-controller="form" class="p-6 bg-gray-100">
+    <h1 class="text-2xl font-bold mb-4 text-primary">Create a new template</h1>
+    <div class="flex">
+        <div class="w-1/3 pr-4 ml-10">
+            <p class="mb-2 text-primary text-xl font-bold mb-6">Template</p>
+            <a href="/home" class="rounded-lg border border-secondary px-4 py-2 text-primary font-bold">Changer de template</a>
 
-				<div id="templateEditPane" class="tab-pane bg-secondary p-4 rounded shadow mt-5">
-					<div class="flex">
-						<button id="templateEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2 selected">Paramètres du template</button>
-						<button id="elementEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2">Propriété de l'élément</button>
-					</div>
-					{{ form_start(form) }}
-					{{ form_widget(form) | raw }}
-					<label for="color" class="text-white mt-2">Couleur :</label>
-					<div class="flex items-center flex-row flex-wrap gap-3 mt-3">
-						{% for color in template.color %}
-							<input type="color" name="color" value="{{ color }}" class="w-8 h-8" disabled>
-						{% endfor %}
-					</div>
-					<label for="zoomRange" class="text-white mt-2">Zoom :</label>
-					<input type="range" id="zoomRange" min="1" max="4" step="0.1" value="1" class="slider">
-					{{ form_end(form) }}
-				</div>
-				<div id="elementEditPane" class="tab-pane bg-secondary p-4 rounded shadow hidden mt-5">
-					<div class="flex">
-						<button id="templateEditBtn1" class="bg-clear text-primary py-2 px-4 rounded w-1/2">Paramètres du template</button>
-						<button id="elementEditBtn1" class="bg-clear text-primary py-2 px-4 rounded w-1/2 selected">Propriété de l'élément</button>
-					</div>
-					<div>
-						<turbo-frame id="formContainer" data-form-target="formContainer" class="w-full"><!-- Le formulaire sera injecté ici --></turbo-frame>
-					</div>
-				</div>
-			</div>
+            <div id="templateEditPane" class="tab-pane bg-secondary p-4 rounded shadow mt-5">
+                <div class="flex">
+                    <button id="templateEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2 selected">Template Edit</button>
+                    <button id="elementEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2">Element Edit</button>
+                </div>
+                {{ form(form) }}
+            </div>
+            <div id="elementEditPane" class="tab-pane bg-secondary p-4 rounded shadow hidden mt-5">
+                <div class="flex">
+                    <button id="templateEditBtn1" class="bg-clear text-primary py-2 px-4 rounded w-1/2">Template Edit</button>
+                    <button id="elementEditBtn1" class="bg-clear text-primary py-2 px-4 rounded w-1/2 selected">Element Edit</button>
+                </div>
+                <div>
+                    <turbo-frame id="formContainer" data-form-target="formContainer" class="w-full"><!-- Le formulaire sera injecté ici --></turbo-frame>
+                </div>
+            </div>
+        </div>
 
-			<div class="w-2/3 pl-4">
-				<div class="flex mb-4 justify-around">
-					<button data-action="click->form#loadForm" data-url="{{ path('form_image') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
-						<img src="{{ asset('images/image.png') }}" alt="Ajouter Image" class="h-14 mb-1">
-						Ajouter Image
-					</button>
+        <div class="w-2/3 pl-4">
+            <div class="flex mb-4 justify-around">
+                <button id="addImage" data-action="click->form#loadForm" data-url="{{ path('form_image') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
+                    <img src="{{ asset('images/image.png') }}" alt="Ajouter Image" class="h-14 mb-1">
+                    Ajouter Image
+                </button>
 
-					<button data-action="click->form#loadForm" data-url="{{ path('form_qrcode') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
-						<img src="{{ asset('images/qrCode.png') }}" alt="Ajouter QrCode" class="h-14 mb-1">
-						Ajouter QR Code
-					</button>
-					<button data-action="click->form#loadForm" data-url="{{ path('form_text') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
-						<img src="{{ asset('images/text.png') }}" alt="Ajouter Text" class="h-14 mb-1">
-						Ajouter Texte
-					</button>
-				</div>
+                <button id="addQrCode" data-action="click->form#loadForm" data-url="{{ path('form_qrcode') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
+                    <img src="{{ asset('images/qrCode.png') }}" alt="Ajouter QrCode" class="h-14 mb-1">
+                    Ajouter QR Code
+                </button>
+                <button id="addText" data-action="click->form#loadForm" data-url="{{ path('form_text') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
+                    <img src="{{ asset('images/text.png') }}" alt="Ajouter Text" class="h-14 mb-1">
+                    Ajouter Texte
+                </button>
+            </div>
 
-				<div id="canvas-container" class="canvas-area bg-white w-fit mx-auto rounded shadow mt-4" data-template-width="{{template.width}}" data-template-height="{{template.height}}"></div>
-			</div>
-		</div>
-	</section>
+            <div id="canvas" class="canvas-area bg-white p-4 rounded shadow mt-4"><!-- Zone de drop pour le canvas --></div>
+        </div>
+    </div>
+</section>
 
-	<style>
-		.selected {
-			background-color: #18534F;
-			color: white;
-		}
+<style>
+    .selected {
+        background-color: #18534F;
+        color: white;
+    }
 
-		.canvas-area {
-			position: relative;
-			z-index: 1;
-			transition: top 0.3s ease;
-		}
+    .canvas {
+        text-align: center;
+    }
 
-		.flex.mb-4.justify-around {
-			position: relative;
-			z-index: 2;
-		}
-	</style>
+    .canvas-area {
+        width: 600px;
+        height: 400px;
+        border: 2px solid #333;
+        position: relative;
+        margin-top: 20px;
+    }
 
-	<script>
-		var templateEditBtn1 = document.getElementById('templateEditBtn1');
-var elementEditBtn1 = document.getElementById('elementEditBtn1');
+    .draggable {
+        position: absolute;
+        cursor: move;
+        padding: 10px;
+        background-color: lightblue;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+</style>
 
-var templateEditBtn = document.getElementById('templateEditBtn');
-var elementEditBtn = document.getElementById('elementEditBtn');
-var templateEditPane = document.getElementById('templateEditPane');
-var elementEditPane = document.getElementById('elementEditPane');
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
 
-templateEditBtn1.addEventListener('click', function () {
-templateEditPane.classList.remove('hidden');
-elementEditPane.classList.add('hidden');
-templateEditBtn.classList.add('selected');
-elementEditBtn.classList.remove('selected');
-});
-elementEditBtn.addEventListener('click', function () {
-elementEditPane.classList.remove('hidden');
-templateEditPane.classList.add('hidden');
-elementEditBtn.classList.add('selected');
-templateEditBtn.classList.remove('selected');
-});
+        let canvas = document.getElementById("canvas");
+        let addTextBtn = document.getElementById("addText");
+        let selectedElement = null;
 
-templateEditBtn.click();
+        addTextBtn.addEventListener("click", function () {
+            let newText = document.createElement("div");
+            newText.classList.add("draggable");
+            newText.innerText = "Déplacez-moi !";
 
-let templateWidth = document.getElementById('canvas-container').dataset.templateWidth;
-let templateHeight = document.getElementById('canvas-container').dataset.templateHeight;
-let canvaDiv = document.getElementById('canvas-container');
+            newText.style.width = "50px";
+            newText.style.height = "50px";
+            newText.style.top = "50px";
+            newText.style.left = "50px";
+            newText.style.position = "absolute";
+            newText.style.color = "black";
+            newText.style.backgroundColor = "transparent";
+            newText.style.fontFamily = "Arial";
+            newText.style.fontSize = "16px";
+            newText.style.textAlign = "left";
+            canvas.appendChild(newText);
 
-let canvas = document.createElement('canvas');
-canvas.id = 'canvas';
-canvas.width = templateWidth;
-canvas.height = templateHeight;
-canvaDiv.appendChild(canvas);
-canvaDiv.style.position = 'absolute';
+            makeDraggable(newText);
 
-var zoomRange = document.getElementById('zoomRange');
-zoomRange.addEventListener('input', function () {
-let scale = zoomRange.value;
-canvaDiv.style.transform = 'scale(' + scale + ')';
-canvaDiv.style.transformOrigin = 'top left';
-});
-	</script>
+            selectedElement = newText;
+            updateFormWithElementValues(newText);
+        });
 
-	<style>
-		.slider {
-			-webkit-appearance: none;
-			appearance: none;
-			width: 100%;
-			cursor: pointer;
-			outline: none;
-			overflow: hidden;
-			border-radius: 16px;
-		}
+        function makeDraggable(element) {
+            let isDragging = false;
+            let offsetX, offsetY;
 
-		.slider::-webkit-slider-runnable-track {
-			height: 15px;
-			background: #fff;
-			border-radius: 16px;
-		}
+            element.addEventListener("mousedown", function (e) {
+                isDragging = true;
+                offsetX = e.clientX - parseInt(window.getComputedStyle(element).left);
+                offsetY = e.clientY - parseInt(window.getComputedStyle(element).top);
+                selectedElement = element;
+                updateFormWithElementValues(element);
+            });
 
-		.slider::-moz-range-track {
-			height: 15px;
-			background: #fff;
-			border-radius: 16px;
-		}
+            document.addEventListener("mousemove", function (e) {
+                if (isDragging) {
+                    let newLeft = e.clientX - offsetX;
+                    let newTop = e.clientY - offsetY;
 
-		.slider::-webkit-slider-thumb {
-			-webkit-appearance: none;
-			appearance: none;
-			height: 15px;
-			width: 15px;
-			background-color: #fff;
-			border-radius: 50%;
-			border: 2px solid #18534F;
-			box-shadow: -407px 0 0 400px #18534F;
-		}
+                    if (newLeft < 0) newLeft = 0;
+                    if (newTop < 0) newTop = 0;
 
-		.slider::-moz-range-thumb {
-			height: 15px;
-			width: 15px;
-			background-color: #18534F;
-			border-radius: 50%;
-			border: 1px solid #18534F;
-			box-shadow: -407px 0 0 400px #18534F;
-		}
+                    if (newLeft + element.offsetWidth > canvas.offsetWidth) {
+                        newLeft = canvas.offsetWidth - element.offsetWidth;
+                    }
+                    if (newTop + element.offsetHeight > canvas.offsetHeight) {
+                        newTop = canvas.offsetHeight - element.offsetHeight;
+                    }
 
-		output {
-			color: #fff;
-		}
-	</style>
+                    element.style.left = newLeft + "px";
+                    element.style.top = newTop + "px";
+                    document.getElementById("text_posX").value = Math.round((newLeft / canvas.offsetWidth) * 100);
+                    document.getElementById("text_posY").value = Math.round((newTop / canvas.offsetHeight) * 100);
+                }
+            });
+
+            document.addEventListener("mouseup", function () {
+                isDragging = false;
+            });
+        }
+
+        // Mise à jour des inputs du formulaire avec les valeurs de l'élément
+        function updateFormWithElementValues(element) {
+            let canvasRect = canvas.getBoundingClientRect();
+            let elementRect = element.getBoundingClientRect();
+
+            if (document.getElementById("text_posX")) {
+                document.getElementById("text_posX").value = Math.round((elementRect.left - canvasRect.left) / canvas.offsetWidth * 100);
+            }
+            if (document.getElementById("text_posY")) {
+                document.getElementById("text_posY").value = Math.round((elementRect.top - canvasRect.top) / canvas.offsetHeight * 100);
+            }
+            if (document.getElementById("text_width")) {
+                document.getElementById("text_width").value = Math.round((element.offsetWidth / canvas.offsetWidth) * 100);
+            }
+            if (document.getElementById("text_height")) {
+                document.getElementById("text_height").value = Math.round((element.offsetHeight / canvas.offsetHeight) * 100);
+            }
+            if (document.getElementById("text_textColor")) {
+                document.getElementById("text_textColor").value = window.getComputedStyle(element).color;
+            }
+            if (document.getElementById("text_backgroundColor")) {
+                document.getElementById("text_backgroundColor").value = window.getComputedStyle(element).backgroundColor;
+            }
+            if (document.getElementById("text_fontSize")) {
+                document.getElementById("text_fontSize").value = parseInt(window.getComputedStyle(element).fontSize);
+            }
+            if (document.getElementById("text_placeholder")) {
+                document.getElementById("text_placeholder").value = element.innerText; // Placeholder avec texte actuel
+            }
+            if (document.getElementById("text_align")) {
+                document.getElementById("text_align").value = window.getComputedStyle(element).textAlign;
+            }
+            if (document.getElementById("text_italic")) {
+                document.getElementById("text_italic").checked = window.getComputedStyle(element).fontStyle === "italic";
+            }
+        }
+
+        // Mise à jour de la position/dimension du texte via les inputs du formulaire
+        function updateSelectedElement() {
+            if (selectedElement) {
+                selectedElement.style.left = (document.getElementById("text_posX").value / 100 * canvas.offsetWidth) + "px";
+                selectedElement.style.top = (document.getElementById("text_posY").value / 100 * canvas.offsetHeight) + "px";
+                selectedElement.style.width = (document.getElementById("text_width").value) + "%";
+                selectedElement.style.height = (document.getElementById("text_height").value) + "%";
+                selectedElement.style.color = document.getElementById("text_textColor").value;
+                selectedElement.style.backgroundColor = document.getElementById("text_backgroundColor").value;
+                selectedElement.style.fontSize = document.getElementById("text_fontSize").value + "px";
+                selectedElement.style.fontFamily = document.getElementById("text_fontFamily").value;
+                selectedElement.style.textAlign = document.getElementById("text_align").value;
+                selectedElement.style.fontStyle = document.getElementById("text_italic").checked ? "italic" : "normal";
+                selectedElement.innerText = document.getElementById("text_placeholder").value || selectedElement.innerText; // Mettre à jour le texte
+            }
+        }
+
+        function addEventListenersWithRetry() {
+            if (document.getElementById("text_posX")) {
+                document.getElementById("text_posX").addEventListener("input", updateSelectedElement);
+                document.getElementById("text_posY").addEventListener("input", updateSelectedElement);
+                document.getElementById("text_width").addEventListener("input", updateSelectedElement);
+                document.getElementById("text_height").addEventListener("input", updateSelectedElement);
+                document.getElementById("text_textColor").addEventListener("input", updateSelectedElement);
+                document.getElementById("text_backgroundColor").addEventListener("input", updateSelectedElement);
+                document.getElementById("text_fontSize").addEventListener("input", updateSelectedElement);
+                document.getElementById("text_fontFamily").addEventListener("change", updateSelectedElement);
+                document.getElementById("text_align").addEventListener("change", updateSelectedElement);
+                document.getElementById("text_italic").addEventListener("change", updateSelectedElement);
+                document.getElementById("text_placeholder").addEventListener("input", updateSelectedElement);
+            } else {
+                setTimeout(addEventListenersWithRetry, 100);
+            }
+        }
+
+        addEventListenersWithRetry();
+
+        canvas.addEventListener("click", function (e) {
+            if (e.target.classList.contains("draggable")) {
+                selectedElement = e.target;
+                updateFormWithElementValues(selectedElement);
+            }
+        });
+
+        // function image //
+        let imgBtn = document.getElementById("addImage");
+        imgBtn.addEventListener("click", function () {
+            let image = document.getElementById("image_src");
+            document.getElementById("image_src").addEventListener("change", function (event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        const imgElement = document.createElement("img");
+                        imgElement.src = e.target.result;
+
+                        // Limiter la taille de l'image à 100x100 pixels (ou toute autre taille souhaitée)
+                        imgElement.onload = function () {
+                            const canvasWidth = canvas.offsetWidth;
+                            const canvasHeight = canvas.offsetHeight;
+
+                            const imgRatio = imgElement.width / imgElement.height;
+                            let newWidth = 100; // Largeur fixe de 100 pixels
+                            let newHeight = newWidth / imgRatio;
+
+                            // Ajuster la hauteur si elle dépasse
+                            if (newHeight > 100) {
+                                newHeight = 100;
+                                newWidth = newHeight * imgRatio;
+                            }
+
+                            // Créer un conteneur pour l'image
+                            const imageContainer = document.createElement("div");
+                            imageContainer.className = "image"; // Ajoutez une classe pour pouvoir le sélectionner
+                            imageContainer.style.position = "absolute";
+                            imageContainer.style.left = "50px"; // Position initiale, vous pouvez ajuster
+                            imageContainer.style.top = "50px"; // Position initiale, vous pouvez ajuster
+                            imageContainer.style.width = `${newWidth}px`;
+                            imageContainer.style.height = `${newHeight}px`;
+                            imageContainer.style.overflow = "hidden"; // Pour éviter les débordements
+
+                            // Ajouter l'image au conteneur
+                            imgElement.style.maxWidth = "100%"; // Pour s'assurer que l'image ne déborde pas
+                            imgElement.style.maxHeight = "100%"; // Pour s'assurer que l'image ne déborde pas
+                            imageContainer.appendChild(imgElement);
+
+                            // Ajouter le conteneur au canvas
+                            canvas.appendChild(imageContainer);
+
+                            // Rendre l'image draggable
+                            makeImageDraggable(imageContainer);
+                        };
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
+        function makeImageDraggable(imageContainer) {
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            imageContainer.addEventListener("mousedown", function (e) {
+                isDragging = true;
+                offsetX = e.clientX - parseInt(window.getComputedStyle(imageContainer).left);
+                offsetY = e.clientY - parseInt(window.getComputedStyle(imageContainer).top);
+            });
+
+            document.addEventListener("mousemove", function (e) {
+                if (isDragging) {
+                    let newLeft = e.clientX - offsetX;
+                    let newTop = e.clientY - offsetY;
+
+                    if (newLeft < 0) newLeft = 0;
+                    if (newTop < 0) newTop = 0;
+
+                    if (newLeft + imageContainer.offsetWidth > canvas.offsetWidth) {
+                        newLeft = canvas.offsetWidth - imageContainer.offsetWidth;
+                    }
+                    if (newTop + imageContainer.offsetHeight > canvas.offsetHeight) {
+                        newTop = canvas.offsetHeight - imageContainer.offsetHeight;
+                    }
+
+                    imageContainer.style.left = newLeft + "px";
+                    imageContainer.style.top = newTop + "px";
+                }
+            });
+
+            document.addEventListener("mouseup", function () {
+                isDragging = false;
+            });
+        }
+    });
+</script>
+
+<style>
+    .slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        cursor: pointer;
+        outline: none;
+        overflow: hidden;
+        border-radius: 16px;
+    }
+
+    .slider::-webkit-slider-runnable-track {
+        height: 15px;
+        background: #fff;
+        border-radius: 16px;
+    }
+
+    .slider::-moz-range-track {
+        height: 15px;
+        background: #fff;
+        border-radius: 16px;
+    }
+
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 15px;
+        width: 15px;
+        background-color: #fff;
+        border-radius: 50%;
+        border: 2px solid #18534F;
+        box-shadow: -407px 0 0 400px #18534F;
+    }
+
+    .slider::-moz-range-thumb {
+        height: 15px;
+        width: 15px;
+        background-color: #18534F;
+        border-radius: 50%;
+        border: 1px solid #18534F;
+        box-shadow: -407px 0 0 400px #18534F;
+    }
+
+    output {
+        color: #fff;
+    }
+</style>
 {% endblock %}
