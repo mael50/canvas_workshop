@@ -71,11 +71,11 @@ class TextType extends ElementType
                 'attr' => ['class' => 'form-select mt-1 block w-full border-gray-300 rounded-md']
             ])
             ->add('bold', null, [
-                'label' => 'Italic:',
+                'label' => 'Gras:',
                 'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
             ])
             ->add('italic', null, [
-                'label' => 'Italic:',
+                'label' => 'Italique:',
                 'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
             ])
             ->add('fontSize', null, [
