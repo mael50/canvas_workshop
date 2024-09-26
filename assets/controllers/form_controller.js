@@ -6,7 +6,7 @@ export default class extends Controller {
     loadForm(event) {
         event.preventDefault();
         const url = event.currentTarget.dataset.url;
-    
+
         fetch(url, {
             headers: {
                 "Turbo-Frame": "formContainer"
@@ -18,18 +18,34 @@ export default class extends Controller {
         })
         .then(html => {
             this.formContainerTarget.innerHTML = html;
-            console.log(this.formContainerTarget.innerHTML); // Débogage
-    
-            // Assurez-vous que les ID et événements sont bien configurés
             this.formContainerTarget.querySelector("form").id = "id-" + Math.random().toString(36).substr(2, 9);
+
             this.setIntoElementEdit();
             this.showRangeValue();
             this.checkAndGenerateQrCode();
             this.addQrCodeFormListeners();
+            this.checkAndHandleImage();
+            this.addImageFormListeners();
+            this.conserveProportionQrCode();
         })
         .catch(error => {
             console.error('Error loading form:', error);
         });
+    }
+
+    conserveProportionQrCode() {
+        let widthInput = document.getElementById("qr_code_width");
+        let heightInput = document.getElementById("qr_code_height");
+
+        if (widthInput && heightInput) {
+            widthInput.addEventListener("input", () => {
+                heightInput.value = widthInput.value;
+            });
+
+            heightInput.addEventListener("input", () => {
+                widthInput.value = heightInput.value;
+            });
+        }
     }
     
 
@@ -112,6 +128,13 @@ export default class extends Controller {
         document.addEventListener("mousemove", (e) => {
             if (isDragging) {
                 const canvas = document.getElementById("canvas");
+
+                const currentQrCode = e.target.closest(".qr-code");
+                let allQrCode = document.querySelectorAll('.qr-code');
+                allQrCode.forEach(qrCode => {
+                    qrCode.classList.remove('selected');
+                });
+                currentQrCode.classList.add('selected');
                 let newLeft = e.clientX - offsetX;
                 let newTop = e.clientY - offsetY;
 
@@ -120,6 +143,7 @@ export default class extends Controller {
 
                 qrCodeElement.style.left = newLeft + "px";
                 qrCodeElement.style.top = newTop + "px";
+
 
                 const qrCodePosX = document.getElementById("qr_code_posX");
                 const qrCodePosY = document.getElementById("qr_code_posY");
@@ -142,6 +166,11 @@ export default class extends Controller {
         const qrCodeWidth = document.getElementById("qr_code_width");
         const qrCodeHeight = document.getElementById("qr_code_height");
         const qrCodeText = document.getElementById("qr_code_text");
+        console.log('qrCodePosX', qrCodePosX);
+        console.log('qrCodePosY', qrCodePosY);
+        console.log('qrCodeWidth', qrCodeWidth);
+        console.log('qrCodeHeight', qrCodeHeight);
+        console.log('qrCodeText', qrCodeText);
 
         if (qrCodePosX && qrCodePosY && qrCodeWidth && qrCodeHeight && qrCodeText) {
             qrCodePosX.addEventListener("input", () => this.updateSelectedQrCode());
@@ -187,14 +216,17 @@ export default class extends Controller {
         const qrCodeHeight = document.getElementById("qr_code_height");
         const qrCodeText = document.getElementById("qr_code_text");
 
-        if (selectedQrCode && qrCodePosX && qrCodePosY && qrCodeWidth && qrCodeHeight && qrCodeText) {
+        if (selectedQrCode && qrCodePosX && qrCodePosY && qrCodeWidth && qrCodeHeight) {
+            console.log('in condition');
+            console.log('selectedQrCode', selectedQrCode);
             selectedQrCode.style.left = (qrCodePosX.value / 100 * canvas.offsetWidth) + "px";
             selectedQrCode.style.top = (qrCodePosY.value / 100 * canvas.offsetHeight) + "px";
             selectedQrCode.style.width = (qrCodeWidth.value / 100 * canvas.offsetWidth) + "px";
             selectedQrCode.style.height = (qrCodeHeight.value / 100 * canvas.offsetHeight) + "px";
-            selectedQrCode.innerText = qrCodeText.value || selectedQrCode.innerText;
+
         }
     }
+
 
     checkAndGenerateQrCode() {
         const form = this.formContainerTarget.querySelector("form");
@@ -234,14 +266,13 @@ export default class extends Controller {
                     return response.blob();
                 })
                 .then(blob => {
-                    // Création d'un nouvel élément QR Code
                     const qrCodeElement = document.createElement("div");
                     qrCodeElement.classList.add("qr-code");
                     qrCodeElement.style.position = "absolute";
                     qrCodeElement.style.cursor = "move";
     
                     const img = document.createElement("img");
-                    img.id = "qr-code-" + textForm; // Assurez-vous que cet ID est unique
+                    img.id = "qr-code-" + textForm;
                     img.src = URL.createObjectURL(blob);
                     img.alt = "QR Code";
     
@@ -255,4 +286,129 @@ export default class extends Controller {
                 });
         }
     }
+
+    checkAndHandleImage() {
+        const form = this.formContainerTarget.querySelector("form");
+        if (form && form.name === "image") {
+            const imageInput = form.querySelector("#image_src");
+            if (imageInput) {
+                imageInput.addEventListener("change", (event) => {
+                    this.displayImagePreview(event.target);
+                });
+            }
+        }
+    }
+
+    displayImagePreview(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.alt = "Image Preview";
+                img.style.position = "absolute";
+                img.style.width = "50%"; // Valeurs initiales
+                img.style.height = "50%";
+                img.style.left = "50px";  // Exemple de position initiale
+                img.style.top = "50px";  // Exemple de position initiale
+                img.style.cursor = "move";
+                img.classList.add("draggable-image");
+
+                const canvas = document.getElementById("canvas");
+                canvas.appendChild(img);
+
+                this.makeImageDraggable(img);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Méthode pour rendre l'image draggable
+    makeImageDraggable(imageElement) {
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        imageElement.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            offsetX = e.clientX - parseInt(window.getComputedStyle(imageElement).left);
+            offsetY = e.clientY - parseInt(window.getComputedStyle(imageElement).top);
+            this.updateImageFormValues(imageElement);
+        });
+
+        document.addEventListener("mousemove", (e) => {
+            if (isDragging) {
+                const canvas = document.getElementById("canvas");
+                let newLeft = e.clientX - offsetX;
+                let newTop = e.clientY - offsetY;
+
+                newLeft = Math.max(0, Math.min(newLeft, canvas.offsetWidth - imageElement.offsetWidth));
+                newTop = Math.max(0, Math.min(newTop, canvas.offsetHeight - imageElement.offsetHeight));
+
+                imageElement.style.left = newLeft + "px";
+                imageElement.style.top = newTop + "px";
+
+                const imagePosX = document.getElementById("image_posX");
+                const imagePosY = document.getElementById("image_posY");
+
+                if (imagePosX && imagePosY) {
+                    imagePosX.value = Math.round((newLeft / canvas.offsetWidth) * 100);
+                    imagePosY.value = Math.round((newTop / canvas.offsetHeight) * 100);
+                }
+            }
+        });
+
+        document.addEventListener("mouseup", () => {
+            isDragging = false;
+        });
+    }
+
+    addImageFormListeners() {
+        const imagePosX = document.getElementById("image_posX");
+        const imagePosY = document.getElementById("image_posY");
+        const imageWidth = document.getElementById("image_width");
+        const imageHeight = document.getElementById("image_height");
+
+        if (imagePosX && imagePosY && imageWidth && imageHeight) {
+            imagePosX.addEventListener("input", () => this.updateSelectedImage());
+            imagePosY.addEventListener("input", () => this.updateSelectedImage());
+            imageWidth.addEventListener("input", () => this.updateSelectedImage());
+            imageHeight.addEventListener("input", () => this.updateSelectedImage());
+        }
+    }
+
+    updateSelectedImage() {
+        const selectedImage = document.querySelector('.draggable-image');
+        const canvas = document.getElementById("canvas");
+        const imagePosX = document.getElementById("image_posX");
+        const imagePosY = document.getElementById("image_posY");
+        const imageWidth = document.getElementById("image_width");
+        const imageHeight = document.getElementById("image_height");
+
+        if (selectedImage && imagePosX && imagePosY && imageWidth && imageHeight) {
+            selectedImage.style.left = (imagePosX.value / 100 * canvas.offsetWidth) + "px";
+            selectedImage.style.top = (imagePosY.value / 100 * canvas.offsetHeight) + "px";
+            selectedImage.style.width = (imageWidth.value / 100 * canvas.offsetWidth) + "px";
+            selectedImage.style.height = (imageHeight.value / 100 * canvas.offsetHeight) + "px";
+        }
+    }
+
+    updateImageFormValues(imageElement) {
+        const canvas = document.getElementById("canvas");
+        const imagePosX = document.getElementById("image_posX");
+        const imagePosY = document.getElementById("image_posY");
+        const imageWidth = document.getElementById("image_width");
+        const imageHeight = document.getElementById("image_height");
+
+        if (canvas && imagePosX && imagePosY && imageWidth && imageHeight) {
+            const canvasRect = canvas.getBoundingClientRect();
+            const imageRect = imageElement.getBoundingClientRect();
+
+            imagePosX.value = Math.round((imageRect.left - canvasRect.left) / canvas.offsetWidth * 100);
+            imagePosY.value = Math.round((imageRect.top - canvasRect.top) / canvas.offsetHeight * 100);
+            imageWidth.value = Math.round((imageElement.offsetWidth / canvas.offsetWidth) * 100);
+            imageHeight.value = Math.round((imageElement.offsetHeight / canvas.offsetHeight) * 100);
+        }
+    }
+
+
 }

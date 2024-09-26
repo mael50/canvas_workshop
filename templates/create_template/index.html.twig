@@ -55,6 +55,9 @@
         background-color: #18534F;
         color: white;
     }
+    .qr-code.selected{
+        background: transparent;
+    }
 
     .canvas {
         text-align: center;
@@ -227,97 +230,6 @@
                 updateFormWithElementValues(selectedElement);
             }
         });
-
-        // function image //
-        let imgBtn = document.getElementById("addImage");
-        imgBtn.addEventListener("click", function () {
-            let image = document.getElementById("image_src");
-            document.getElementById("image_src").addEventListener("change", function (event) {
-                const file = event.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        const imgElement = document.createElement("img");
-                        imgElement.src = e.target.result;
-
-                        // Limiter la taille de l'image à 100x100 pixels (ou toute autre taille souhaitée)
-                        imgElement.onload = function () {
-                            const canvasWidth = canvas.offsetWidth;
-                            const canvasHeight = canvas.offsetHeight;
-
-                            const imgRatio = imgElement.width / imgElement.height;
-                            let newWidth = 100; // Largeur fixe de 100 pixels
-                            let newHeight = newWidth / imgRatio;
-
-                            // Ajuster la hauteur si elle dépasse
-                            if (newHeight > 100) {
-                                newHeight = 100;
-                                newWidth = newHeight * imgRatio;
-                            }
-
-                            // Créer un conteneur pour l'image
-                            const imageContainer = document.createElement("div");
-                            imageContainer.className = "image"; // Ajoutez une classe pour pouvoir le sélectionner
-                            imageContainer.style.position = "absolute";
-                            imageContainer.style.left = "50px"; // Position initiale, vous pouvez ajuster
-                            imageContainer.style.top = "50px"; // Position initiale, vous pouvez ajuster
-                            imageContainer.style.width = `${newWidth}px`;
-                            imageContainer.style.height = `${newHeight}px`;
-                            imageContainer.style.overflow = "hidden"; // Pour éviter les débordements
-
-                            // Ajouter l'image au conteneur
-                            imgElement.style.maxWidth = "100%"; // Pour s'assurer que l'image ne déborde pas
-                            imgElement.style.maxHeight = "100%"; // Pour s'assurer que l'image ne déborde pas
-                            imageContainer.appendChild(imgElement);
-
-                            // Ajouter le conteneur au canvas
-                            canvas.appendChild(imageContainer);
-
-                            // Rendre l'image draggable
-                            makeImageDraggable(imageContainer);
-                        };
-                    };
-
-                    reader.readAsDataURL(file);
-                }
-            });
-        });
-
-        function makeImageDraggable(imageContainer) {
-            let isDragging = false;
-            let offsetX, offsetY;
-
-            imageContainer.addEventListener("mousedown", function (e) {
-                isDragging = true;
-                offsetX = e.clientX - parseInt(window.getComputedStyle(imageContainer).left);
-                offsetY = e.clientY - parseInt(window.getComputedStyle(imageContainer).top);
-            });
-
-            document.addEventListener("mousemove", function (e) {
-                if (isDragging) {
-                    let newLeft = e.clientX - offsetX;
-                    let newTop = e.clientY - offsetY;
-
-                    if (newLeft < 0) newLeft = 0;
-                    if (newTop < 0) newTop = 0;
-
-                    if (newLeft + imageContainer.offsetWidth > canvas.offsetWidth) {
-                        newLeft = canvas.offsetWidth - imageContainer.offsetWidth;
-                    }
-                    if (newTop + imageContainer.offsetHeight > canvas.offsetHeight) {
-                        newTop = canvas.offsetHeight - imageContainer.offsetHeight;
-                    }
-
-                    imageContainer.style.left = newLeft + "px";
-                    imageContainer.style.top = newTop + "px";
-                }
-            });
-
-            document.addEventListener("mouseup", function () {
-                isDragging = false;
-            });
-        }
     });
 </script>
 
