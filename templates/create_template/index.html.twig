@@ -5,16 +5,15 @@
 
 {% block body %}
 	<section data-controller="form" class="p-6 bg-gray-100">
-		<h1 class="text-2xl font-bold mb-4 text-primary">Create a new template</h1>
+		<h1 class="text-2xl font-bold mb-4 text-primary">Modifiez votre template</h1>
 		<div class="flex">
 			<div class="w-1/3 pr-4 ml-10">
-				<p class="mb-2 text-primary text-xl font-bold mb-6">Template</p>
-				<a href="/home" class=" rounded-lg border border-secondary px-4 py-2 text-primary font-bold">Changer de template</a>
+				<a href="/" class=" rounded-lg border border-secondary px-4 py-2 text-primary font-bold">Changer de template</a>
 
 				<div id="templateEditPane" class="tab-pane bg-secondary p-4 rounded shadow mt-5">
 					<div class="flex">
-						<button id="templateEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2 selected">Template Edit</button>
-						<button id="elementEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2">Element Edit</button>
+						<button id="templateEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2 selected">Paramètres du template</button>
+						<button id="elementEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2">Propriété de l'élément</button>
 					</div>
 					{{ form_start(form) }}
 					{{ form_widget(form) | raw }}
@@ -28,8 +27,8 @@
 				</div>
 				<div id="elementEditPane" class="tab-pane bg-secondary p-4 rounded shadow hidden mt-5">
 					<div class="flex">
-						<button id="templateEditBtn1" class="bg-clear text-primary py-2 px-4 rounded w-1/2 ">Template Edit</button>
-						<button id="elementEditBtn1" class="bg-clear text-primary py-2 px-4 rounded w-1/2 selected">Element Edit</button>
+						<button id="templateEditBtn1" class="bg-clear text-primary py-2 px-4 rounded w-1/2 ">Paramètres du template</button>
+						<button id="elementEditBtn1" class="bg-clear text-primary py-2 px-4 rounded w-1/2 selected">Propriété de l'élément</button>
 					</div>
 					<div>
 						<turbo-frame
@@ -42,7 +41,7 @@
 			<div class="w-2/3 pl-4">
 				<div class="flex mb-4 justify-around">
 					<button data-action="click->form#loadForm" data-url="{{ path('form_image') }}" class="bg-orangeCustom
-																																																																																																																																																																																																																																																 text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
+																																																																																																																																																																																																																																																																																										 text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
 						<img
 						src="{{ asset('images/image.png') }}" alt="Ajouter Image" class="h-14 mb-1">
 						<!-- Ajuster la hauteur de l'image -->
