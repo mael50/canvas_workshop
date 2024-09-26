@@ -43,7 +43,7 @@ class ElementType extends AbstractType
                 'attr' => [
                     'class' => 'slider mt-2',
                     'min' => 0,  // Valeur minimale
-                    'max' => 100,  // Valeur maximale
+                    'max' => 98,  // Valeur maximale
                 ],
             ])
             ->add('height', RangeType::class, [
