@@ -96,10 +96,6 @@
 	</style>
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
-			// Mode debug : définissez à true pour activer les logs de débogage
-			const debug = true;
-
-			// Récupération des éléments du DOM pour les boutons et les panneaux
 			var templateEditBtn1 = document.getElementById('templateEditBtn1');
 			var elementEditBtn1 = document.getElementById('elementEditBtn1');
 			var templateEditBtn = document.getElementById('templateEditBtn');
@@ -107,16 +103,14 @@
 			var templateEditPane = document.getElementById('templateEditPane');
 			var elementEditPane = document.getElementById('elementEditPane');
 			var uniqIdText = 0;
-			let selectedElement = null; // Variable pour stocker l'élément actuellement sélectionné
 
-			// Gestion des événements pour les boutons d'édition du template et des éléments
+
+
 			templateEditBtn1.addEventListener('click', function () {
 				templateEditPane.classList.remove('hidden');
 				elementEditPane.classList.add('hidden');
 				templateEditBtn.classList.add('selected');
 				elementEditBtn.classList.remove('selected');
-
-				if (debug) console.log('Template edit pane ouvert');
 			});
 
 			elementEditBtn.addEventListener('click', function () {
@@ -124,61 +118,60 @@
 				templateEditPane.classList.add('hidden');
 				elementEditBtn.classList.add('selected');
 				templateEditBtn.classList.remove('selected');
-
-				if (debug) console.log('Element edit pane ouvert');
 			});
 
-			// Par défaut, on affiche le panneau d'édition du template
 			templateEditBtn.click();
 
-			// Gestion du drag & drop
+			// drag & drop //
 			let canvas = document.getElementById("canvas");
 			let addTextBtn = document.getElementById("addText");
 			let newTop = 0;
 			let newLeft = 0;
 
-			// Événement pour ajouter un nouveau texte au canvas
 			addTextBtn.addEventListener("click", function () {
 				let newText = document.createElement("div");
 				newText.classList.add("draggable");
 				newText.innerText = "Déplacez-moi !";
 
-				// Position par défaut du texte
-				newText.style.position = "absolute"; // Assurez-vous que l'élément est positionné
+				newText.style.width = "150px";
+				newText.style.height = "50px";
 				newText.style.top = "0px";
 				newText.style.left = "0px";
+				newText.style.position = "absolute";
+				newText.style.color = "black";
+				newText.style.backgroundColor = "transparent";
+				newText.style.fontFamily = "Arial";
+				newText.style.fontSize = "16px";
+				newText.style.textAlign = "left";
+				uniqIdText="text"+Math.random().toString(36).substr(2, 9);
+				newText.id =uniqIdText;
 
-				// Génération d'un ID unique pour chaque élément
-				uniqIdText = "text" + Math.random().toString(36).substr(2, 9);
-				newText.id = uniqIdText;
-
-				// Ajout du nouvel élément au canvas
 				canvas.appendChild(newText);
 
-				if (debug) console.log('Nouvel élément ajouté avec ID:', uniqIdText);
-
-				// Rendre l'élément draggable
 				makeDraggable(newText);
 			});
 
-			// Fonction pour rendre un élément draggable
+
+
 			function makeDraggable(element) {
 				let isDragging = false;
 				let offsetX, offsetY;
 				let canvasRect = canvas.getBoundingClientRect();
 
-				// Événement lorsque l'utilisateur commence à draguer l'élément
 				element.addEventListener("mousedown", function (e) {
 					isDragging = true;
 					offsetX = e.clientX - parseInt(window.getComputedStyle(element).left);
 					offsetY = e.clientY - parseInt(window.getComputedStyle(element).top);
 
-					if (debug) console.log('Drag commencé sur l\'élément ID:', element.id);
+					updateElement(element);
+
 				});
 
-				// Événement lorsque l'utilisateur déplace la souris
 				document.addEventListener("mousemove", function (e) {
 					if (isDragging) {
+						document.getElementById('text_width').disabled = false;
+						document.getElementById('text_height').disabled = false;
+						document.getElementById('text_posX').disabled=false;
 						newLeft = e.clientX - offsetX;
 						newTop = e.clientY - offsetY;
 
@@ -195,71 +188,218 @@
 							newTop = canvasRect.height - elementRect.height;
 						}
 
-						// Mettre à jour la position de l'élément
 						element.style.left = newLeft + "px";
 						element.style.top = newTop + "px";
 
-						// Mettre à jour les champs de saisie si cet élément est sélectionné
-						if (selectedElement === element) {
-							let sliderValue = Math.round((newLeft / canvasRect.width) * 100);
-							let sliderValueY = Math.round((newTop / canvasRect.height) * 100);
-							document.getElementById('text_posX').value = sliderValue;
-							document.getElementById('text_posY').value = sliderValueY;
+						// Mettre à jour la valeur du slider en fonction de la position X
+						// Vous pouvez choisir la logique de mapping que vous préférez ici
+						let sliderValue = Math.round((newLeft / canvasRect.width) * 100); // Convertir la position en pourcentage
+						let sliderValueY = Math.round((newTop / canvasRect.height) * 100); // Convertir la position en pourcentage
+						//document.querySelector('input[type=range]').value = sliderValue;
+						document.getElementById('text_posX').value = sliderValue;
+						document.getElementById('text_posY').value = sliderValueY;
 
-							if (debug) console.log('Position mise à jour pour l\'élément sélectionné:', element.id, 'X:', sliderValue, 'Y:', sliderValueY);
-						}
+
+
 					}
 				});
 
-				// Événement lorsque l'utilisateur relâche le bouton de la souris
+				function updateElement(element){
+					//mettre a jour la largeur selon le slider
+					console.log(element);
+					document.getElementById('text_width').addEventListener('input', function() {
+						let canvasRect = canvas.getBoundingClientRect();
+						let elementRect = element.getBoundingClientRect();
+
+						console.log('Element');
+						console.log(elementRect);
+						console.log('Canva' );
+
+						console.log(canvasRect);
+						console.log(element.height)
+
+						if(elementRect.right< canvasRect.right ){
+
+							element.style.width = this.value + '%';
+
+						}
+						else{
+							//disable text_width
+							document.getElementById('text_width').disabled = true;
+						}
+					});
+
+					document.getElementById('text_height').addEventListener('input', function() {
+						let canvasRect = canvas.getBoundingClientRect();
+						let elementRect = element.getBoundingClientRect();
+
+						if(elementRect.bottom< canvasRect.bottom ){
+
+							element.style.height = this.value + '%';
+
+						}
+						else{
+							//disable text_width
+							document.getElementById('text_height').disabled = true;
+						}
+					});
+
+					document.getElementById('text_inputAssocie').addEventListener('input', function() {
+						element.innerText = this.value;
+					});
+
+					document.getElementById('text_placeholder').addEventListener('input', function() {
+						element.innerText = this.value;
+
+					});
+					document.getElementById('text_textColor').addEventListener('input', function() {
+						element.style.color = this.value;
+					});
+
+					document.getElementById('text_backgroundColor').addEventListener('input', function() {
+						element.style.backgroundColor = this.value;
+					});
+
+					document.getElementById('text_align').addEventListener('input', function() {
+						element.style.display = 'flex';
+
+						element.style.alignItems = 'center'; // Aligner verticalement par défaut
+						element.style.position = 'relative'; // Assurez-vous que l'élément est positionné
+
+						// Top alignments
+						if (this.value == 'top-left') {
+							element.style.justifyContent = 'flex-start'; // Aligné à gauche
+							element.style.alignItems = 'flex-start'; // Aligné en haut
+						}
+						if (this.value == 'top-center') {
+							element.style.justifyContent = 'center'; // Aligné au centre
+							element.style.alignItems = 'flex-start'; // Aligné en haut
+						}
+						if (this.value == 'top-right') {
+							element.style.justifyContent = 'flex-end'; // Aligné à droite
+							element.style.alignItems = 'flex-start'; // Aligné en haut
+						}
+
+						// Middle alignments
+						if (this.value == 'center-left') {
+							element.style.justifyContent = 'flex-start'; // Aligné à gauche
+							      // Aligné au milieu verticalement
+						}
+
+						if (this.value == 'center-center') {
+							element.style.justifyContent = 'center';       // Aligné au milieu verticalement
+						}
+
+						if (this.value == 'center-right') {
+							element.style.justifyContent = 'flex-end';       // Aligné au milieu verticalement
+						}
+
+						// Bottom alignments
+						if (this.value == 'bottom-left') {
+							element.style.justifyContent = 'flex-start'; // Aligné à gauche
+							element.style.alignItems = 'flex-end'; // Aligné en bas
+						}
+						if (this.value == 'bottom-center') {
+							element.style.justifyContent = 'center'; // Aligné au centre
+							element.style.alignItems = 'flex-end'; // Aligné en bas
+						}
+						if (this.value == 'bottom-right') {
+							element.style.justifyContent = 'flex-end'; // Aligné à droite
+							element.style.alignItems = 'flex-end'; // Aligné en bas
+						}
+					});
+					document.getElementById('text_bold').addEventListener('change', function() {
+						if (this.checked) {
+							element.style.fontWeight = 'bold';
+						} else {
+							element.style.fontWeight = 'normal';
+						}
+					});
+
+					document.getElementById('text_italic').addEventListener('change', function() {
+						if (this.checked) {
+							element.style.fontStyle = 'italic'; // Appliquer l'italique
+						} else {
+							element.style.fontStyle = 'normal'; // Revenir au texte normal
+						}
+					});
+
+					document.getElementById('text_fontSize').addEventListener('input', function() {
+						element.style.fontSize = this.value + 'px';
+					});
+
+					document.getElementById('text_fontFamily').addEventListener('change', function() {
+						element.style.fontFamily = this.value;
+					});
+
+
+
+				}
+
 				document.addEventListener("mouseup", function () {
-					if (isDragging && debug) console.log('Drag terminé sur l\'élément ID:', element.id);
 					isDragging = false;
+
 				});
 
-				// Événement lorsque l'utilisateur clique sur l'élément
-				element.addEventListener('click', function(event) {
-					selectedElement = this;
 
-					if (debug) console.log('Élément sélectionné:', selectedElement.id);
+				document.getElementById(uniqIdText).addEventListener('click', function(event) {
+					// Récupérer l'élément cible
 
-					// Mettre à jour les champs de saisie avec la position actuelle de l'élément
-					let canvasRect = canvas.getBoundingClientRect();
-					let elementRect = selectedElement.getBoundingClientRect();
-					let posX = Math.round(((elementRect.left - canvasRect.left) / canvasRect.width) * 100);
-					let posY = Math.round(((elementRect.top - canvasRect.top) / canvasRect.height) * 100);
-					document.getElementById('text_posX').value = posX;
-					document.getElementById('text_posY').value = posY;
+					const currentTarget = event.target;
+					console.log(currentTarget);
 
-					if (debug) console.log('Champs de position mis à jour pour l\'élément sélectionné:', 'X:', posX, 'Y:', posY);
+					let tab=[];
+
+
+					if (currentTarget.classList.contains('draggable')) {
+						tab.push(currentTarget);
+						console.log(tab);
+						changePosX(tab[0]);
+						changePosY(tab[0]);
+						tab=[];
+						console.log(tab);
+					}
+
 				});
-				document.getElementById('text_posX').addEventListener('input', function() {
-					selectedElement.style.left = this.value + '%';
-				});
+				//delete
+
 			}
 
 
-			// Écouteurs d'événements pour les champs de saisie de position
-			/*document.getElementById('text_posX').addEventListener('input', function() {
-				if (selectedElement) {
-					selectedElement.style.left = this.value + '%';
 
-					if (debug) console.log('Position X mise à jour via le champ de saisie pour l\'élément ID:', selectedElement.id, 'Nouvelle valeur:', this.value + '%');
-				} else if (debug) {
-					console.log('Aucun élément sélectionné pour mettre à jour la position X');
+
+			function changePosX(element){
+				let canvasRect = canvas.getBoundingClientRect();
+				let elementRect = element.getBoundingClientRect();
+
+				document.getElementById('text_posX').addEventListener('input', function() {
+
+					//convertie en entier
+					let intElement = parseInt(elementRect.right);
+					let intCanvas = parseInt(canvasRect.right);
+					console.log(intElement);
+					console.log(intCanvas);
+					console.log(elementRect)
+					console.log(canvasRect)
+					let largeur=elementRect.left+elementRect.width;
+
+					if(intElement>= intCanvas ){
+						document.getElementById('text_posX').disabled=true;
+					}
+					element.style.left = this.value + '%';
+				});
+
+			}
+			function changePosY(element){
+				let canvasRect = canvas.getBoundingClientRect();
+				let elementRect = element.getBoundingClientRect();
+				if(elementRect.bottom< canvasRect.bottom ){
+					document.getElementById('text_posY').addEventListener('input', function() {
+						element.style.top = this.value + '%';
+					});
 				}
-			});*/
 
-			/*document.getElementById('text_posY').addEventListener('input', function() {
-				if (selectedElement) {
-					selectedElement.style.top = this.value + '%';
-
-					if (debug) console.log('Position Y mise à jour via le champ de saisie pour l\'élément ID:', selectedElement.id, 'Nouvelle valeur:', this.value + '%');
-				} else if (debug) {
-					console.log('Aucun élément sélectionné pour mettre à jour la position Y');
-				}
-			});*/
-
+			}
 		});
 	</script>
 

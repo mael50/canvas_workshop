@@ -57,21 +57,23 @@ class TextType extends ElementType
                 'label' => 'Alignement:',
                 'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
                 'choices' => [
-                    'left' => 'left',
-                    'center' => 'center',
-                    'right' => 'right',
+                    'top-left' => 'top-left',
+                    'top-center' => 'top-center',
+                    'top-right' => 'top-right',
+                    'center-left' => 'center-left',
+                    'center-center' => 'center-center',
+                    'center-right' => 'center-right',
+                    'bottom-left' => 'bottom-left',
+                    'bottom-center' => 'bottom-center',
+                    'bottom-right' => 'bottom-right',
                     'justify' => 'justify',
-                    'justify-all' => 'justify-all',
-                    'top' => 'top',
-                    'bottom' => 'bottom',
-                    'middle' => 'middle',
-                    'full' => 'full',
+
                 ],
                 //menu select
                 'attr' => ['class' => 'form-select mt-1 block w-full border-gray-300 rounded-md']
             ])
             ->add('bold', null, [
-                'label' => 'Italic:',
+                'label' => 'Bold:',
                 'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
             ])
             ->add('italic', null, [
@@ -84,7 +86,21 @@ class TextType extends ElementType
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
             ])
             ->add('fontFamily', ChoiceType::class, [
-                'choices' => $fontChoices,
+                'choices' => [
+                    'Arial' => 'Arial',
+                    'Times New Roman' => 'Times New Roman',
+                    'Verdana' => 'Verdana',
+                    'Courier New' => 'Courier New',
+                    'Georgia' => 'Georgia',
+                    'Palatino Linotype' => 'Palatino Linotype',
+                    'Comic Sans MS' => 'Comic Sans MS',
+                    'Lucida Sans Unicode' => 'Lucida Sans Unicode',
+                    'Trebuchet MS' => 'Trebuchet MS',
+                    'Tahoma' => 'Tahoma',
+                    'Arial Black' => 'Arial Black',
+                    'Impact' => 'Impact',
+                    'Lucida Console' => 'Lucida Console'
+                ],
                 'label' => 'Police:',
                 'label_attr' => ['class' => 'text-white mt-2'],
                 'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
