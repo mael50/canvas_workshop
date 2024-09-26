@@ -8,11 +8,12 @@ use App\Service\GoogleFontService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\ColorType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Validator\Constraints\Count;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\ColorType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class TextType extends ElementType
 {
@@ -85,9 +86,14 @@ class TextType extends ElementType
             ])
             ->add('fontFamily', ChoiceType::class, [
                 'choices' => $fontChoices,
+                'autocomplete' => true,
+                'placeholder' => '',
                 'label' => 'Police:',
                 'label_attr' => ['class' => 'text-white mt-2'],
-                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md']
+                'attr' => ['class' => 'form-input mt-1 block w-full border-gray-300 rounded-md'],
+                'constraints' => [
+                    new Count(min: 1, minMessage: 'Choisissez une police d\'écriture')
+                ],
             ])
         ;
     }
