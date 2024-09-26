@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Text;
 use App\Entity\Color;
 use App\Entity\Image;
+use App\Entity\QrCode;
 use App\Form\TextType;
 use App\Entity\Element;
 use App\Form\ImageType;
@@ -17,15 +19,19 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\Common\Collections\ArrayCollection;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class CreateTemplateController extends AbstractController
 {
     private $imageStorage;
+    private $logger;
 
-    public function __construct(ImageStorage $imageStorage)
+    public function __construct(ImageStorage $imageStorage, LoggerInterface $logger)
     {
         $this->imageStorage = $imageStorage;
+        $this->logger = $logger;
     }
 
     // Dans votre méthode createTemplate
@@ -115,5 +121,90 @@ class CreateTemplateController extends AbstractController
             'qrCodeForm' => $qrCodeForm->createView(),
             'template' => $template,
         ]);
+    }
+
+    #[Route('/create-template/add-element', name: 'create_template_add_element', methods: ['POST'])]
+    public function addElement(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $this->logger->info('addElement called');
+        $data = json_decode($request->getContent(), true);
+
+        if (!$data) {
+            $this->logger->error('Invalid JSON');
+            return new JsonResponse(['error' => 'Invalid JSON'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $id = $data['id'] ?? null;
+
+        if ($id) {
+            $element = $entityManager->getRepository(Element::class)->find($id);
+
+            if ($element) {
+                $element->setPosX($data['posX'])
+                    ->setPosY($data['posY'])
+                    ->setWidth($data['width'])
+                    ->setHeight($data['height']);
+
+                // si c'est une image
+                if ($data['type'] === 'image') {
+                    $image = $entityManager->getRepository(Image::class)->find($id);
+                    $element->setSrc($image);
+                    $element->setName(null);
+                }
+
+                // si c'est un texte
+                if ($data['type'] === 'text') {
+                    $element->setTextColor($data['textColor']);
+                    $element->setBackgroundColor($data['backgroundColor']);
+                    $element->setPlaceHolder($data['placeHolder']);
+                    $element->setAlign($data['align']);
+                    $element->isBold($data['isBold']);
+                    $element->isItalic($data['isItalic']);
+                    $element->setFontSize($data['fontSize']);
+                    $element->setFontFamily($data['fontFamily']);
+                }
+
+                // si c'est un qrcode
+                if ($data['type'] === 'qrcode') {
+                    $element->setText($data['text']);
+                }
+
+                $entityManager->flush();
+                return new JsonResponse(null, Response::HTTP_OK);
+            }
+        } else {
+            // Créer un nouvel élément en fonction du type
+            $type = $data['type'];
+            if ($type === 'image') {
+                $element = new Image();
+                $element->setSrc($data['src']);
+            } elseif ($type === 'text') {
+                $element = new Text();
+                $element->setTextColor($data['textColor']);
+                $element->setBackgroundColor($data['backgroundColor']);
+                $element->setPlaceHolder($data['placeHolder']);
+                $element->setAlign($data['align']);
+                $element->isBold($data['isBold']);
+                $element->isItalic($data['isItalic']);
+                $element->setFontSize($data['fontSize']);
+                $element->setFontFamily($data['fontFamily']);
+            } elseif ($type === 'qrcode') {
+                $element = new QrCode();
+                $element->setText($data['text']);
+            } else {
+                return new JsonResponse(['error' => 'Type non supporté'], Response::HTTP_BAD_REQUEST);
+            }
+
+            $element->setPosX($data['posX'])
+                ->setPosY($data['posY'])
+                ->setWidth($data['width'])
+                ->setHeight($data['height']);
+
+            $entityManager->persist($element);
+            $entityManager->flush();
+            return new JsonResponse(['id' => $element->getId()], Response::HTTP_CREATED);
+        }
+
+        return new JsonResponse(['error' => 'Element not found'], Response::HTTP_BAD_REQUEST);
     }
 }

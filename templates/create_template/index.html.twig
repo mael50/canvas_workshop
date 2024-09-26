@@ -24,8 +24,6 @@
 							<input type="color" name="color" value="{{ color }}" class="w-8 h-8" disabled>
 						{% endfor %}
 					</div>
-					<label for="zoomRange" class="text-white mt-2">Zoom :</label>
-					<input type="range" id="zoomRange" min="1" max="4" step="0.1" value="1" class="slider">
 					{{ form_end(form) }}
 				</div>
 				<div id="elementEditPane" class="tab-pane bg-secondary p-4 rounded shadow hidden mt-5">
@@ -83,7 +81,6 @@
 	</style>
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
-
 var templateEditBtn1 = document.getElementById('templateEditBtn1');
 var elementEditBtn1 = document.getElementById('elementEditBtn1');
 var templateEditBtn = document.getElementById('templateEditBtn');
@@ -99,7 +96,6 @@ templateEditPane.classList.remove('hidden');
 elementEditPane.classList.add('hidden');
 templateEditBtn.classList.add('selected');
 elementEditBtn.classList.remove('selected');
-
 });
 
 elementEditBtn.addEventListener('click', function () {
@@ -107,7 +103,6 @@ elementEditPane.classList.remove('hidden');
 templateEditPane.classList.add('hidden');
 elementEditBtn.classList.add('selected');
 templateEditBtn.classList.remove('selected');
-
 });
 
 templateEditBtn.click();
@@ -129,6 +124,9 @@ newText.id = uniqIdText;
 canvas.appendChild(newText);
 
 makeDraggable(newText);
+
+// Créer l'élément en BDD
+createElementInDB(newText);
 });
 
 function makeDraggable(element) {
@@ -141,7 +139,6 @@ element.addEventListener("mousedown", function (e) {
 isDragging = true;
 offsetX = (e.clientX - parseInt(window.getComputedStyle(element).left)) / zoomFactor;
 offsetY = (e.clientY - parseInt(window.getComputedStyle(element).top)) / zoomFactor;
-
 });
 
 document.addEventListener("mousemove", function (e) {
@@ -176,17 +173,15 @@ let sliderValue = Math.round((newLeft / canvasRect.width) * 100);
 let sliderValueY = Math.round((newTop / canvasRect.height) * 100);
 document.getElementById('text_posX').value = sliderValue;
 document.getElementById('text_posY').value = sliderValueY;
-
 }
 }
 });
 
 document.addEventListener("mouseup", function () {
-if (isDragging) 
+if (isDragging) {
 isDragging = false;
-
-
-
+updateElementInDB(element);
+}
 });
 
 element.addEventListener('click', function (event) {
@@ -198,11 +193,8 @@ let posX = Math.round(((elementRect.left - canvasRect.left) / canvasRect.width) 
 let posY = Math.round(((elementRect.top - canvasRect.top) / canvasRect.height) * 100);
 document.getElementById('text_posX').value = posX;
 document.getElementById('text_posY').value = posY;
-
-
 });
 
-// Vérifiez l'existence des éléments avant d'ajouter les écouteurs d'événements
 let textPosX = document.getElementById('text_posX');
 let textPosY = document.getElementById('text_posY');
 if (textPosX && textPosY) {
@@ -213,6 +205,66 @@ textPosY.addEventListener('input', function () {
 selectedElement.style.top = this.value + '%';
 });
 }
+}
+
+function createElementInDB(element) {
+let data = {
+type: 'text', // ou 'image' ou 'qrcode' selon le type d'élément
+posX: element.style.left,
+posY: element.style.top,
+width: element.offsetWidth,
+height: element.offsetHeight,
+// Ajouter d'autres propriétés spécifiques à l'élément ici
+};
+
+fetch('/create-template/add-element', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json'
+},
+body: JSON.stringify(data)
+}).then(response => {
+if (!response.ok) {
+throw new Error('Network response was not ok');
+}
+return response.json();
+}).then(data => {
+console.log('Response Data:', data);
+if (data.id) {
+element.dataset.id = data.id; // Assigner l'ID retourné par le serveur à l'élément
+} else {
+console.error('Error:', data.error);
+}
+}).catch(error => console.error('Error:', error));
+}
+
+function updateElementInDB(element) {
+if (! element.dataset.id) {
+console.error('Error: Element ID is not defined.');
+return;
+}
+
+let data = {
+id: element.dataset.id,
+posX: element.style.left,
+posY: element.style.top,
+width: element.offsetWidth,
+height: element.offsetHeight,
+// Ajouter d'autres propriétés spécifiques à l'élément ici
+};
+
+fetch(`/create-template/add-element/`, {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+'X-Requested-With': 'XMLHttpRequest'
+},
+body: JSON.stringify(data)
+}).then(response => {
+if (!response.ok) {
+throw new Error('Network response was not ok');
+}
+}).catch(error => console.error('Error:', error));
 }
 
 let templateWidth = document.getElementById('canvas-container').dataset.templateWidth;
@@ -226,13 +278,6 @@ canvasElement.height = templateHeight;
 canvaDiv.appendChild(canvasElement);
 canvaDiv.style.position = 'absolute';
 
-var zoomRange = document.getElementById('zoomRange');
-zoomRange.addEventListener('input', function () {
-zoomFactor = zoomRange.value;
-canvaDiv.style.transform = 'scale(' + zoomFactor + ')';
-canvaDiv.style.transformOrigin = 'top left';
-
-// Limiter les déplacements des éléments lors du zoom
 let elements = document.querySelectorAll('.draggable');
 elements.forEach(element => {
 let elementRect = element.getBoundingClientRect();
@@ -250,7 +295,6 @@ element.style.left = '0px';
 if (parseInt(element.style.top) < 0) {
 element.style.top = '0px';
 }
-});
 });
 });
 	</script>
