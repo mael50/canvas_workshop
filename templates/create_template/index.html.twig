@@ -36,6 +36,7 @@
 						<turbo-frame id="formContainer" data-form-target="formContainer" class="w-full"><!-- Le formulaire sera injecté ici --></turbo-frame>
 					</div>
 				</div>
+				<a href="{{ path('app_home', {'id': template.id}) }}" class="rounded-lg border border-secondary px-4 py-2 text-primary font-bold block w-fit mt-5">Enregistrer le template</a>
 			</div>
 
 			<div class="w-2/3 pl-4">
@@ -59,24 +60,6 @@
 			</div>
 		</div>
 	</section>
-
-	<style>
-		.selected {
-			background-color: #18534F;
-			color: white;
-		}
-
-		.canvas-area {
-			position: relative;
-			z-index: 1;
-			transition: top 0.3s ease;
-		}
-
-		.flex.mb-4.justify-around {
-			position: relative;
-			z-index: 2;
-		}
-	</style>
 
 	<script>
 		var templateEditBtn1 = document.getElementById('templateEditBtn1');
@@ -122,6 +105,21 @@ canvaDiv.style.transformOrigin = 'top left';
 	</script>
 
 	<style>
+		.selected {
+			background-color: #18534F;
+			color: white;
+		}
+
+		.canvas-area {
+			position: relative;
+			z-index: 1;
+			transition: top 0.3s ease;
+		}
+
+		.flex.mb-4.justify-around {
+			position: relative;
+			z-index: 2;
+		}
 		.slider {
 			-webkit-appearance: none;
 			appearance: none;
