@@ -129,6 +129,20 @@
 			let count = 0;
 			let tab =[]
 
+			function rgbToHex(rgb) {
+				// Extraire les valeurs r, g, b du format rgb(r, g, b)
+				var rgbValues = rgb.match(/\d+/g); // Cela extrait un tableau des valeurs [r, g, b]
+
+				// Convertir chaque valeur de r, g, b en hexadécimal et s'assurer qu'il y a 2 chiffres
+				var r = parseInt(rgbValues[0]).toString(16).padStart(2, '0');
+				var g = parseInt(rgbValues[1]).toString(16).padStart(2, '0');
+				var b = parseInt(rgbValues[2]).toString(16).padStart(2, '0');
+
+				// Retourner la couleur sous format hexadécimal
+				return `#${r}${g}${b}`.toUpperCase(); // On retourne en majuscules par convention
+			}
+
+
 			addTextBtn.addEventListener("click", function () {
 				let newText = document.createElement("div");
 				newText.classList.add("draggable");
@@ -139,8 +153,12 @@
 				newText.style.top = "0px";
 				newText.style.left = "0px";
 				newText.style.position = "absolute";
-				newText.style.color = "black";
-				newText.style.backgroundColor = "transparent";
+				newText.style.backgroundColor = "#FFFFFF";
+				newText.style.color = "#000000";
+				newText.style.fontWeight = "normal";
+				newText.style.fontStyle = "normal";
+
+
 				newText.style.fontFamily = "Arial";
 				newText.style.fontSize = "16px";
 				newText.style.textAlign = "left";
@@ -162,19 +180,27 @@
 				}
 			// Fonction pour sélectionner un élément
 			
+			function removeQuotes(text) {
+				// Utilise replace() pour supprimer les guillemets s'ils sont présents au début et à la fin du texte
+				return text.replace(/^"(.*)"$/, '$1');
+			}
+
+			function extractNumbers(text) {
+				// Utilise une expression régulière pour extraire uniquement les chiffres au début du texte
+				return text.match(/^\d+/)[0];
+			}
+
 
 
 			function selectElement(element) {
 				if (currentElement) {
 					cur=currentElement
 					currentElement=null;
-					// Désélectionner l'élément précédent (si nécessaire)
-					cur.style.color=document.getElementById('text_textColor').value;
+					// Désélectionner l'élément précédent (si nécessaire)					
 					cur.classList.remove('selected-element'); 
 				}
 				currentElement = element;  // Mettre à jour l'élément sélectionné
 				currentElement.classList.add('selected-element');  // Ajouter une classe de sélection
-				currentElement.style.color='white';
 				// Mettre à jour les sliders de position avec les valeurs actuelles
 				let canvasRect = canvas.getBoundingClientRect();
 				let leftPercentage = (parseInt(currentElement.style.left) / canvasRect.width) * 100;//mettre en pourcentage
@@ -183,8 +209,26 @@
 				document.getElementById('text_posY').value = Math.round(topPercentage);
 				document.getElementById('text_width').value =(currentElement.clientWidth/canvasRect.width) * 100;
 				document.getElementById('text_height').value =(currentElement.clientHeight/canvasRect.height) * 100;
-				document.getElementById('text_inputAssocie').value =currentElement.textContent;
-				document.getElementById('text_textColor').value=currentElement.style.color;
+				document.getElementById('text_placeholder').value =currentElement.textContent;
+				document.getElementById('text_textColor').value= rgbToHex(currentElement.style.color);
+				document.getElementById('text_backgroundColor').value= rgbToHex(currentElement.style.backgroundColor);
+				if(currentElement.style.fontWeight == 'normal'){
+						document.getElementById('text_bold').checked=0;}
+						else{
+							document.getElementById('text_bold').checked=1;
+						}
+
+				if(currentElement.style.fontStyle == 'normal'){
+					document.getElementById('text_italic').checked=0;}
+				else{
+					document.getElementById('text_italic').checked=1;
+				}
+				document.getElementById('text_fontSize').value=extractNumbers(currentElement.style.fontSize);
+				document.getElementById('text_fontFamily').value=removeQuotes(currentElement.style.fontFamily);
+
+			
+
+				
 				
 
 
@@ -245,8 +289,22 @@
 						document.getElementById('text_posY').value = sliderValueY;
 						document.getElementById('text_width').value =(element.clientWidth/canvasRect.width) * 100;
 						document.getElementById('text_height').value =(element.clientHeight/canvasRect.height) * 100;
-						document.getElementById('text_inputAssocie').value =element.textContent;
-						document.getElementById('text_textColor').value=element.style.color;
+						document.getElementById('text_placeholder').value =element.textContent;
+						document.getElementById('text_textColor').value= rgbToHex(element.style.color);
+						document.getElementById('text_backgroundColor').value= rgbToHex(element.style.backgroundColor);
+						if(element.style.fontWeight == 'normal'){
+						document.getElementById('text_bold').checked=0;}
+						else{
+							document.getElementById('text_bold').checked=1;
+						}
+						if(element.style.fontStyle == 'normal'){
+							document.getElementById('text_italic').checked=0;}
+						else{
+							document.getElementById('text_italic').checked=1;
+						}
+						document.getElementById('text_fontSize').value=extractNumbers(element.style.fontSize);
+						document.getElementById('text_fontFamily').value=removeQuotes(element.style.fontFamily);
+
 
 
 
@@ -289,9 +347,6 @@
 						}
 					});
 
-					document.getElementById('text_inputAssocie').addEventListener('input', function() {
-						tab[0].innerText = this.value;
-					});
 
 					document.getElementById('text_placeholder').addEventListener('input', function() {
 						tab[0].innerText = this.value;
@@ -373,33 +428,33 @@
 					});
 
 					document.getElementById('text_fontSize').addEventListener('input', function() {
-						element.style.fontSize = this.value + 'px';
+						tab[0].style.fontSize = this.value + 'px';
 
 						// Attendre un petit délai pour que le navigateur applique la nouvelle taille de texte
 						setTimeout(function() {
 							// Obtenez les dimensions actuelles de l'élément texte
-							let elementRect = element.getBoundingClientRect();
+							let elementRect = tab[0].getBoundingClientRect();
 							let canvasRect = canvas.getBoundingClientRect();
 
 							// Ajuster la largeur
-							if (element.scrollWidth >= elementRect.width) {
+							if (tab[0].scrollWidth >= elementRect.width) {
 								// Si le texte dépasse la largeur et que l'élément ne dépasse pas le canvas
-								if (elementRect.left + element.scrollWidth <= canvasRect.width) {
-									element.style.width = element.scrollWidth + 'px';
+								if (elementRect.left + tab[0].scrollWidth <= canvasRect.width) {
+									tab[0].style.width = tab[0].scrollWidth + 'px';
 								}
 							}
 
 							// Ajuster la hauteur
-							if (element.scrollHeight >= elementRect.height) {
+							if (tab[0].scrollHeight >= elementRect.height) {
 								// Si le texte dépasse la hauteur et que l'élément ne dépasse pas le canvas
-								if (elementRect.top + element.scrollHeight <= canvasRect.height) {
-									element.style.height = element.scrollHeight + 'px';
+								if (elementRect.top + tab[0].scrollHeight <= canvasRect.height) {
+									tab[0].style.height = tab[0].scrollHeight + 'px';
 								}
 							}
 
 							// Mise à jour des sliders de largeur et hauteur
-							document.getElementById('text_width').value = (element.offsetWidth / canvas.offsetWidth) * 100;
-							document.getElementById('text_height').value = (element.offsetHeight / canvas.offsetHeight) * 100;
+							document.getElementById('text_width').value = (tab[0].offsetWidth / canvas.offsetWidth) * 100;
+							document.getElementById('text_height').value = (tab[0].offsetHeight / canvas.offsetHeight) * 100;
 						}, 50); // Délai pour permettre au navigateur d'appliquer la nouvelle taille de police
 					});
 
