@@ -34,16 +34,19 @@ export default class extends Controller {
     }
 
     conserveProportionQrCode() {
-        let widthInput = document.getElementById("qr_code_width");
-        let heightInput = document.getElementById("qr_code_height");
+        const qrCodeWidth = document.getElementById("qr_code_width");
+        const qrCodeHeight = document.getElementById("qr_code_height");
+        const canvas = document.getElementById("canvas");
 
-        if (widthInput && heightInput) {
-            widthInput.addEventListener("input", () => {
-                heightInput.value = widthInput.value;
+        if (qrCodeWidth && qrCodeHeight) {
+            qrCodeWidth.addEventListener("input", () => {
+                console.log(qrCodeWidth.value);
+                qrCodeHeight.value = qrCodeWidth.value;
             });
 
-            heightInput.addEventListener("input", () => {
-                widthInput.value = heightInput.value;
+            qrCodeHeight.addEventListener("input", () => {
+                qrCodeWidth.value = qrCodeHeight.value;
+                console.log(qrCodeHeight.value);
             });
         }
     }
@@ -68,28 +71,33 @@ export default class extends Controller {
         const posYInput = document.getElementById("qr_code_posY");
         const widthInput = document.getElementById("qr_code_width");
         const heightInput = document.getElementById("qr_code_height");
-
+    
         if (posXInput && posYInput && widthInput && heightInput) {
             const canvas = document.getElementById("canvas");
-
+    
             posXInput.addEventListener("input", () => {
-                qrCodeElement.style.left = (posXInput.value / 100 * canvas.offsetWidth) + "px";
+                qrCodeElement.style.left = Math.min(posXInput.value / 100 * canvas.offsetWidth, canvas.offsetWidth - qrCodeElement.offsetWidth) + "px";
             });
-
+    
             posYInput.addEventListener("input", () => {
-                qrCodeElement.style.top = (posYInput.value / 100 * canvas.offsetHeight) + "px";
+                qrCodeElement.style.top = Math.min(posYInput.value / 100 * canvas.offsetHeight, canvas.offsetHeight - qrCodeElement.offsetHeight) + "px";
             });
-
+    
             widthInput.addEventListener("input", () => {
-                qrCodeElement.style.width = (widthInput.value / 100 * canvas.offsetWidth) + "px";
+                const size = Math.min(widthInput.value / 100 * canvas.offsetWidth, canvas.offsetWidth - qrCodeElement.offsetLeft);
+                qrCodeElement.style.width = size + "px";
+                qrCodeElement.style.height = size + "px"; // Garde la proportion carrée
+                heightInput.value = widthInput.value; // Synchronisation des valeurs
             });
-
+    
             heightInput.addEventListener("input", () => {
-                qrCodeElement.style.height = (heightInput.value / 100 * canvas.offsetHeight) + "px";
+                const size = Math.min(heightInput.value / 100 * canvas.offsetHeight, canvas.offsetHeight - qrCodeElement.offsetTop);
+                qrCodeElement.style.height = size + "px";
+                qrCodeElement.style.width = size + "px"; // Garde la proportion carrée
+                widthInput.value = heightInput.value; // Synchronisation des valeurs
             });
         }
     }
-
     showRangeValue() {
         const ranges = this.formContainerTarget.querySelectorAll("input[type=range]");
         ranges.forEach(range => {
@@ -118,6 +126,7 @@ export default class extends Controller {
         let offsetX, offsetY;
 
         qrCodeElement.addEventListener("mousedown", (e) => {
+            e.preventDefault(); // Empêche le comportement par défaut
             isDragging = true;
             offsetX = e.clientX - parseInt(window.getComputedStyle(qrCodeElement).left);
             offsetY = e.clientY - parseInt(window.getComputedStyle(qrCodeElement).top);
@@ -134,7 +143,9 @@ export default class extends Controller {
                 allQrCode.forEach(qrCode => {
                     qrCode.classList.remove('selected');
                 });
+                if (currentQrCode){
                 currentQrCode.classList.add('selected');
+                }
                 let newLeft = e.clientX - offsetX;
                 let newTop = e.clientY - offsetY;
 
@@ -298,10 +309,10 @@ export default class extends Controller {
                 img.src = e.target.result;
                 img.alt = "Image Preview";
                 img.style.position = "absolute";
-                img.style.width = "50%"; // Valeurs initiales
+                img.style.width = "50%";
                 img.style.height = "50%";
-                img.style.left = "50px";  // Exemple de position initiale
-                img.style.top = "50px";  // Exemple de position initiale
+                img.style.left = "50px";
+                img.style.top = "50px";
                 img.style.cursor = "move";
                 img.classList.add("draggable-image");
 
@@ -316,12 +327,12 @@ export default class extends Controller {
 
     }
 
-    // Méthode pour rendre l'image draggable
     makeImageDraggable(imageElement) {
         let isDragging = false;
         let offsetX, offsetY;
 
         imageElement.addEventListener("mousedown", (e) => {
+            e.preventDefault();
             isDragging = true;
             offsetX = e.clientX - parseInt(window.getComputedStyle(imageElement).left);
             offsetY = e.clientY - parseInt(window.getComputedStyle(imageElement).top);
