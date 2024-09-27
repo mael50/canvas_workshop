@@ -82,10 +82,14 @@ export default class extends Controller {
 
             widthInput.addEventListener("input", () => {
                 qrCodeElement.style.width = (widthInput.value / 100 * canvas.offsetWidth) + "px";
+                qrCodeElement.style.height = (widthInput.value / 100 * canvas.offsetHeight) + "px";
+                heightInput.value = widthInput.value;
             });
 
             heightInput.addEventListener("input", () => {
                 qrCodeElement.style.height = (heightInput.value / 100 * canvas.offsetHeight) + "px";
+                qrCodeElement.style.width = (heightInput.value / 100 * canvas.offsetWidth) + "px";
+                widthInput.value = heightInput.value;
             });
         }
     }
@@ -118,6 +122,7 @@ export default class extends Controller {
         let offsetX, offsetY;
 
         qrCodeElement.addEventListener("mousedown", (e) => {
+            e.preventDefault(); // Empêche le comportement par défaut
             isDragging = true;
             offsetX = e.clientX - parseInt(window.getComputedStyle(qrCodeElement).left);
             offsetY = e.clientY - parseInt(window.getComputedStyle(qrCodeElement).top);
@@ -134,7 +139,9 @@ export default class extends Controller {
                 allQrCode.forEach(qrCode => {
                     qrCode.classList.remove('selected');
                 });
+                if (currentQrCode){
                 currentQrCode.classList.add('selected');
+                }
                 let newLeft = e.clientX - offsetX;
                 let newTop = e.clientY - offsetY;
 
@@ -322,6 +329,7 @@ export default class extends Controller {
         let offsetX, offsetY;
 
         imageElement.addEventListener("mousedown", (e) => {
+            e.preventDefault();
             isDragging = true;
             offsetX = e.clientX - parseInt(window.getComputedStyle(imageElement).left);
             offsetY = e.clientY - parseInt(window.getComputedStyle(imageElement).top);
