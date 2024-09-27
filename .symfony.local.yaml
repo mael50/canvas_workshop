@@ -3,4 +3,5 @@ workers:
     cmd: ['symfony', 'console', 'tailwind:build', '--watch']
   
   docusaurus:
+    cmd: ['npm', 'install', '--prefix', 'docs']
     cmd: ['npm', 'start', '--prefix', 'docs']
