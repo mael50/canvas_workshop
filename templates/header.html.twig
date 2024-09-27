@@ -41,13 +41,21 @@
 										<label for="name" class="block text-sm font-medium text-gray-700">Nom du template</label>
 										<input type="text" id="name" name="name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
 									</div>
+									{# <div>
+																																																																									<label for="height" class="block text-sm font-medium text-gray-700">Hauteur (en pixels)</label>
+																																																																									<input type="number" id="height" name="height" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+																																																																								</div>
+																																																																								<div>
+																																																																									<label for="width" class="block text-sm font-medium text-gray-700">Largeur (en pixels)</label>
+																																																																									<input type="number" id="width" name="width" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+																																																																								</div> #}
 									<div>
-										<label for="height" class="block text-sm font-medium text-gray-700">Hauteur (en pixels)</label>
-										<input type="number" id="height" name="height" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
-									</div>
-									<div>
-										<label for="width" class="block text-sm font-medium text-gray-700">Largeur (en pixels)</label>
-										<input type="number" id="width" name="width" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+										<label for="size" class="block text-sm font-medium text-gray-700">Taille du template</label>
+										<select id="size" name="size" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+											<option value="">Sélectionner...</option>
+											<option value="800x480">800x480</option>
+											<option value="960x640">960x640</option>
+										</select>
 									</div>
 									<div>
 										<label for="colorCount" class="block text-sm font-medium text-gray-700">Nombre de couleurs</label>
@@ -224,17 +232,16 @@ document.getElementById('templateForm').addEventListener('submit', function (eve
 event.preventDefault(); // Empêche la soumission par défaut du formulaire
 
 const name = document.getElementById('name').value;
-const height = document.getElementById('height').value;
-const width = document.getElementById('width').value;
+const size = document.getElementById('size').value;
+const [width, height] = size.split('x');
 const colorCombination = document.querySelector('input[name="colorCombination"]:checked');
 // Récupérer la combinaison sélectionnée
 
 // Vérifier que tous les champs requis sont remplis
-if (! name || ! height || ! width || ! colorCombination) {
+if (! name || !height || !width || ! colorCombination) {
 alert('Veuillez remplir tous les champs et sélectionner une combinaison de couleurs.');
 return;
 }
-
 // Préparer les données à envoyer
 const formData = {
 name: name,
@@ -250,7 +257,7 @@ headers: {
 'Content-Type': 'application/json'
 },
 body: JSON.stringify(formData)
-}).then(response => response.json()).then(data => { // Redirect to /create-element/{id} with the new template ID
+}).then(response => response.json()).then(data => {
 window.location.href = `/create-template/${
 data.id
 }`;
