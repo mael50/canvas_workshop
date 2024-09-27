@@ -126,8 +126,6 @@ export default class extends Controller {
 
         document.addEventListener("mousemove", (e) => {
             if (isDragging) {
-                document.getElementById('text_width').disabled = false;
-				document.getElementById('text_height').disabled = false;
 
                 const canvas = document.getElementById("canvas");
 
@@ -436,6 +434,4 @@ export default class extends Controller {
             imageHeight.value = Math.round((imageElement.offsetHeight / canvas.offsetHeight) * 100);
         }
     }
-
-
 }
