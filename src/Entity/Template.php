@@ -43,6 +43,9 @@ class Template
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $previewUrl = null;
+
     public function __construct()
     {
         $this->color = new ArrayCollection();
@@ -166,6 +169,18 @@ class Template
     public function setUpdatedAt(\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getPreviewUrl(): ?string
+    {
+        return $this->previewUrl;
+    }
+
+    public function setPreviewUrl(?string $previewUrl): static
+    {
+        $this->previewUrl = $previewUrl;
 
         return $this;
     }

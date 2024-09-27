@@ -20,6 +20,12 @@ form button {
     @apply bg-blue-500 text-white py-2 px-4 rounded;
 }
 
+form button.save-template-btn {
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+}
+
 form select {
     @apply block w-full text-gray-700 border border-gray-300 rounded py-2 px-3;
 }

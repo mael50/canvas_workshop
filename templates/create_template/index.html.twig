@@ -8,15 +8,14 @@
 		<h1 class="text-2xl font-bold mb-4 text-primary">Modifiez votre template</h1>
 		<div class="flex">
 			<div class="w-1/3 pr-4 ml-10">
-				<a href="/" class=" rounded-lg border border-secondary px-4 py-2 text-primary font-bold">Changer de template</a>
+				<a href="/" class="rounded-lg border border-secondary px-4 py-2 text-primary font-bold">Changer de template</a>
 
 				<div id="templateEditPane" class="tab-pane bg-secondary p-4 rounded shadow mt-5">
 					<div class="flex">
 						<button id="templateEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2 selected">Paramètres du template</button>
 						<button id="elementEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2">Propriété de l'élément</button>
 					</div>
-					{{ form_start(form) }}
-
+					{{ form_start(form, {'action': path('save_template', {'id': template.id}), 'method': 'POST'}) }}
 					{{ form_widget(form) | raw }}
 					<label for="color" class="text-white mt-2">Couleur :</label>
 					<div class="flex items-center flex-row flex-wrap gap-3 mt-3">
@@ -24,17 +23,16 @@
 							<input type="color" name="color" value="{{ color }}" class="w-8 h-8" disabled>
 						{% endfor %}
 					</div>
+					<button type="submit" class="save-template-btn rounded-lg border border-secondary px-4 py-2 text-primary font-bold block w-fit mt-5">Enregistrer le template</button>
 					{{ form_end(form) }}
 				</div>
 				<div id="elementEditPane" class="tab-pane bg-secondary p-4 rounded shadow hidden mt-5">
 					<div class="flex">
-						<button id="templateEditBtn1" class="bg-clear text-primary py-2 px-4 rounded w-1/2 ">Paramètres du template</button>
+						<button id="templateEditBtn1" class="bg-clear text-primary py-2 px-4 rounded w-1/2">Paramètres du template</button>
 						<button id="elementEditBtn1" class="bg-clear text-primary py-2 px-4 rounded w-1/2 selected">Propriété de l'élément</button>
 					</div>
 					<div>
-						<turbo-frame
-							id="formContainer" data-form-target="formContainer" class="w-full"><!-- Le formulaire sera injecté ici -->
-						</turbo-frame>
+						<turbo-frame id="formContainer" data-form-target="formContainer" class="w-full"><!-- Le formulaire sera injecté ici --></turbo-frame>
 					</div>
 				</div>
 			</div>
@@ -46,7 +44,7 @@
 						Ajouter Image
 					</button>
 
-					<button  data-action="click->form#loadForm" data-url="{{ path('form_qrcode') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
+					<button data-action="click->form#loadForm" data-url="{{ path('form_qrcode') }}" class="bg-orangeCustom text-white py-1 px-2 rounded mb-2 flex flex-col items-center">
 						<img src="{{ asset('images/qrCode.png') }}" alt="Ajouter QrCode" class="h-14 mb-1">
 						Ajouter QR Code
 					</button>
@@ -56,12 +54,7 @@
 					</button>
 				</div>
 
-				<!-- Ajout d'un bouton pour insérer du texte dans le canevas -->
-				<!--<button id="addText" class="bg-green-500 text-white py-2 px-4 rounded">Ajouter du texte</button>-->
-
-				<div
-					id="canvas" class="canvas-area bg-white p-4 rounded shadow mt-4"><!-- Zone de drop pour le canvas -->
-				</div>
+				<div id="canvas-container" class="canvas-area bg-white w-fit mx-auto rounded shadow mt-4" data-template-width="{{template.width}}" data-template-height="{{template.height}}"></div>
 			</div>
 		</div>
 	</section>
@@ -72,17 +65,8 @@
 			color: white;
 		}
 
-
 		.canvas {
 			text-align: center;
-		}
-
-		.canvas-area {
-			width: 600px;
-			height: 400px;
-			border: 2px solid #333;
-			position: relative;
-			margin-top: 20px;
 		}
 
 		.draggable {
@@ -96,406 +80,241 @@
 	</style>
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
-			var templateEditBtn1 = document.getElementById('templateEditBtn1');
-			var elementEditBtn1 = document.getElementById('elementEditBtn1');
-			var templateEditBtn = document.getElementById('templateEditBtn');
-			var elementEditBtn = document.getElementById('elementEditBtn');
-			var templateEditPane = document.getElementById('templateEditPane');
-			var elementEditPane = document.getElementById('elementEditPane');
-			var uniqIdText = 0;
-
-
-
-			templateEditBtn1.addEventListener('click', function () {
-				templateEditPane.classList.remove('hidden');
-				elementEditPane.classList.add('hidden');
-				templateEditBtn.classList.add('selected');
-				elementEditBtn.classList.remove('selected');
-			});
-
-			elementEditBtn.addEventListener('click', function () {
-				elementEditPane.classList.remove('hidden');
-				templateEditPane.classList.add('hidden');
-				elementEditBtn.classList.add('selected');
-				templateEditBtn.classList.remove('selected');
-			});
-
-			templateEditBtn.click();
-
-			// drag & drop //
-			let canvas = document.getElementById("canvas");
-			let addTextBtn = document.getElementById("addText");
-			let currentElement = null;  // Stocker l'élément actuellement sélectionné
-			let count = 0;
-			let tab =[]
-
-			addTextBtn.addEventListener("click", function () {
-				let newText = document.createElement("div");
-				newText.classList.add("draggable");
-				newText.innerText = "Déplacez-moi !";
-
-				newText.style.width = "150px";
-				newText.style.height = "50px";
-				newText.style.top = "0px";
-				newText.style.left = "0px";
-				newText.style.position = "absolute";
-				newText.style.color = "black";
-				newText.style.backgroundColor = "transparent";
-				newText.style.fontFamily = "Arial";
-				newText.style.fontSize = "16px";
-				newText.style.textAlign = "left";
-				uniqIdText="text"+count;
-				count++;
-				newText.id=uniqIdText;
-
-				canvas.appendChild(newText);
-
-				makeDraggable(newText);
-				
-				// Ajouter l'écouteur d'événements
-				newText.addEventListener('click', elementT);
-			});
-			function elementT(event){
-					tab.shift();
-					tab.push(event.target);
-					selectElement(event.target);
-				}
-			// Fonction pour sélectionner un élément
-			
-
-
-			function selectElement(element) {
-				if (currentElement) {
-					cur=currentElement
-					currentElement=null;
-					// Désélectionner l'élément précédent (si nécessaire)
-					cur.style.color=document.getElementById('text_textColor').value;
-					cur.classList.remove('selected-element'); 
-				}
-				currentElement = element;  // Mettre à jour l'élément sélectionné
-				currentElement.classList.add('selected-element');  // Ajouter une classe de sélection
-				currentElement.style.color='white';
-				// Mettre à jour les sliders de position avec les valeurs actuelles
-				let canvasRect = canvas.getBoundingClientRect();
-				let leftPercentage = (parseInt(currentElement.style.left) / canvasRect.width) * 100;//mettre en pourcentage
-				let topPercentage = (parseInt(currentElement.style.top) / canvasRect.height) * 100;
-				document.getElementById('text_posX').value = Math.round(leftPercentage);
-				document.getElementById('text_posY').value = Math.round(topPercentage);
-				document.getElementById('text_width').value =(currentElement.clientWidth/canvasRect.width) * 100;
-				document.getElementById('text_height').value =(currentElement.clientHeight/canvasRect.height) * 100;
-				document.getElementById('text_inputAssocie').value =currentElement.textContent;
-				document.getElementById('text_textColor').value=currentElement.style.color;
-				
-
-
-
-				
-				// Mettre à jour les sliders pour changer la position de l'élément sélectionné
-				if (currentElement.classList.contains('selected-element')){
-					changePosX();
-					changePosY();
-				}
-			}
-
-
-
-			function makeDraggable(element) {
-				let isDragging = false;
-				let offsetX, offsetY;
-				let canvasRect = canvas.getBoundingClientRect();
-
-				element.addEventListener("mousedown", function (e) {
-					isDragging = true;
-					offsetX = e.clientX - parseInt(window.getComputedStyle(element).left);
-					offsetY = e.clientY - parseInt(window.getComputedStyle(element).top);
-					updateElement(element);
-
-				});
-
-				document.addEventListener("mousemove", function (e) {
-					if (isDragging) {
-						document.getElementById('text_width').disabled = false;
-						document.getElementById('text_height').disabled = false;
-						document.getElementById('text_posX').disabled=false;
-						newLeft = e.clientX - offsetX;
-						newTop = e.clientY - offsetY;
-
-						// Vérifier les limites du canevas
-						let elementRect = element.getBoundingClientRect();
-
-						// Limiter à la zone du canevas
-						if (newLeft < 0) newLeft = 0;
-						if (newTop < 0) newTop = 0;
-						if (newLeft + elementRect.width > canvasRect.width) {
-							newLeft = canvasRect.width - elementRect.width;
-						}
-						if (newTop + elementRect.height > canvasRect.height) {
-							newTop = canvasRect.height - elementRect.height;
-						}
-
-						element.style.left = newLeft + "px";
-						element.style.top = newTop + "px";
-
-						// Mettre à jour la valeur du slider en fonction de la position X
-						// Vous pouvez choisir la logique de mapping que vous préférez ici
-						let sliderValue = Math.round((newLeft / canvasRect.width) * 100); // Convertir la position en pourcentage
-						let sliderValueY = Math.round((newTop / canvasRect.height) * 100); // Convertir la position en pourcentage
-						//document.querySelector('input[type=range]').value = sliderValue;
-						document.getElementById('text_posX').value = sliderValue;
-						document.getElementById('text_posY').value = sliderValueY;
-						document.getElementById('text_width').value =(element.clientWidth/canvasRect.width) * 100;
-						document.getElementById('text_height').value =(element.clientHeight/canvasRect.height) * 100;
-						document.getElementById('text_inputAssocie').value =element.textContent;
-						document.getElementById('text_textColor').value=element.style.color;
-
-
-
-
-						
-
-
-
-					}
-				});
-
-				function updateElement(element){
-					//mettre a jour la largeur selon le slider
-					document.getElementById('text_width').addEventListener('input', function() {
-						let canvasRect = canvas.getBoundingClientRect();
-						let elementRect = element.getBoundingClientRect();
-						if(elementRect.right< canvasRect.right ){
-
-							tab[0].style.width = this.value + '%';
-
-						}
-						else{
-							//disable text_width
-							document.getElementById('text_width').disabled = true;
-						}
-					});
-
-					document.getElementById('text_height').addEventListener('input', function() {
-						let canvasRect = canvas.getBoundingClientRect();
-						let elementRect = element.getBoundingClientRect();
-
-						if(elementRect.bottom< canvasRect.bottom ){
-
-							tab[0].style.height = this.value + '%';
-
-						}
-						else{
-							//disable text_width
-							document.getElementById('text_height').disabled = true;
-						}
-					});
-
-					document.getElementById('text_inputAssocie').addEventListener('input', function() {
-						tab[0].innerText = this.value;
-					});
-
-					document.getElementById('text_placeholder').addEventListener('input', function() {
-						tab[0].innerText = this.value;
-
-					});
-					document.getElementById('text_textColor').addEventListener('input', function() {
-						tab[0].style.color = this.value;
-					});
-
-					document.getElementById('text_backgroundColor').addEventListener('input', function() {
-						tab[0].style.backgroundColor = this.value;
-					});
-
-				document.getElementById('text_align').addEventListener('input', function() {
-						// Désactiver flex pour permettre le positionnement libre lors du déplacement
-						element.style.display = ''; // Réinitialiser display
-
-						// Aligner seulement dans les cas spécifiques
-						if (this.value === 'top-left') {
-							element.style.display = 'flex';
-							element.style.justifyContent = 'flex-start';
-							element.style.alignItems = 'flex-start';
-						}
-						if (this.value === 'top-center') {
-							element.style.display = 'flex';
-							element.style.justifyContent = 'center';
-							element.style.alignItems = 'flex-start';
-						}
-						if (this.value === 'top-right') {
-							element.style.display = 'flex';
-							element.style.justifyContent = 'flex-end';
-							element.style.alignItems = 'flex-start';
-						}
-						if (this.value === 'center-left') {
-							element.style.display = 'flex';
-							element.style.justifyContent = 'flex-start';
-							element.style.alignItems = 'center';
-						}
-						if (this.value === 'center-center') {
-							element.style.display = 'flex';
-							element.style.justifyContent = 'center';
-							element.style.alignItems = 'center';
-						}
-						if (this.value === 'center-right') {
-							element.style.display = 'flex';
-							element.style.justifyContent = 'flex-end';
-							element.style.alignItems = 'center';
-						}
-						if (this.value === 'bottom-left') {
-							element.style.display = 'flex';
-							element.style.justifyContent = 'flex-start';
-							element.style.alignItems = 'flex-end';
-						}
-						if (this.value === 'bottom-center') {
-							element.style.display = 'flex';
-							element.style.justifyContent = 'center';
-							element.style.alignItems = 'flex-end';
-						}
-						if (this.value === 'bottom-right') {
-							element.style.display = 'flex';
-							element.style.justifyContent = 'flex-end';
-							element.style.alignItems = 'flex-end';
-						}
-					});
-					document.getElementById('text_bold').addEventListener('change', function() {
-						if (this.checked) {
-							tab[0].style.fontWeight = 'bold';
-						} else {
-							tab[0].style.fontWeight = 'normal';
-						}
-					});
-
-					document.getElementById('text_italic').addEventListener('change', function() {
-						if (this.checked) {
-							tab[0].style.fontStyle = 'italic'; // Appliquer l'italique
-						} else {
-							tab[0].style.fontStyle = 'normal'; // Revenir au texte normal
-						}
-					});
-
-					document.getElementById('text_fontSize').addEventListener('input', function() {
-						element.style.fontSize = this.value + 'px';
-
-						// Attendre un petit délai pour que le navigateur applique la nouvelle taille de texte
-						setTimeout(function() {
-							// Obtenez les dimensions actuelles de l'élément texte
-							let elementRect = element.getBoundingClientRect();
-							let canvasRect = canvas.getBoundingClientRect();
-
-							// Ajuster la largeur
-							if (element.scrollWidth >= elementRect.width) {
-								// Si le texte dépasse la largeur et que l'élément ne dépasse pas le canvas
-								if (elementRect.left + element.scrollWidth <= canvasRect.width) {
-									element.style.width = element.scrollWidth + 'px';
-								}
-							}
-
-							// Ajuster la hauteur
-							if (element.scrollHeight >= elementRect.height) {
-								// Si le texte dépasse la hauteur et que l'élément ne dépasse pas le canvas
-								if (elementRect.top + element.scrollHeight <= canvasRect.height) {
-									element.style.height = element.scrollHeight + 'px';
-								}
-							}
-
-							// Mise à jour des sliders de largeur et hauteur
-							document.getElementById('text_width').value = (element.offsetWidth / canvas.offsetWidth) * 100;
-							document.getElementById('text_height').value = (element.offsetHeight / canvas.offsetHeight) * 100;
-						}, 50); // Délai pour permettre au navigateur d'appliquer la nouvelle taille de police
-					});
-
-					document.getElementById('text_fontFamily').addEventListener('change', function() {
-						tab[0].style.fontFamily = this.value;
-					});
-
-
-
-				}
-
-				document.addEventListener("mouseup", function () {
-					isDragging = false;
-
-				});
-
-
-				document.getElementById(uniqIdText).addEventListener('click', function(event) {
-					// Récupérer l'élément cible
-
-					const currentTarget = event.target;
-
-					let tab=[];
-
-
-					if (currentTarget.classList.contains('draggable')) {
-						tab.push(currentTarget);
-						changePosX(tab[0]);
-						changePosY(tab[0]);
-						tab=[];
-					}
-
-				});
-				//delete
-
-			}
-
-			
-
-
-
-			function changePosX(element){
-				let canvasRect = canvas.getBoundingClientRect();
-				let elementRect = element.getBoundingClientRect();
-
-				document.getElementById('text_posX').addEventListener('input', function() {
-					// Met à jour la position X en pourcentage
-					let newX = (this.value / 100) * canvasRect.width;
-
-					// Vérifie si l'élément est hors des limites du canvas à droite
-					if (newX + elementRect.width > canvasRect.width) {
-						newX = canvasRect.width - elementRect.width; // Limite à la droite du canvas
-						document.getElementById('text_posX').disabled = true; // Désactiver l'input
-					}
-					// Vérifie si l'élément est hors des limites à gauche
-					else if (newX < 0) {
-						newX = 0; // Limite à la gauche du canvas
-						document.getElementById('text_posX').disabled = true; // Désactiver l'input
-					}
-					else {
-						document.getElementById('text_posX').disabled = false; // Activer l'input si l'élément est dans les limites
-					}
-
-					// Applique la nouvelle position en pixels
-					tab[0].style.left = newX + 'px';
-				});
-
-
-			}
-			function changePosY(element){
-				let canvasRect = canvas.getBoundingClientRect();
-				let elementRect = element.getBoundingClientRect();
-				document.getElementById('text_posY').addEventListener('input', function() {
-					let newY = (this.value / 100) * canvasRect.height;
-
-					if (newY + elementRect.height > canvasRect.height) {
-						newY = canvasRect.height - elementRect.height;
-						document.getElementById('text_posY').disabled = true;
-					} else if (newY < 0) {
-						newY = 0;
-						document.getElementById('text_posY').disabled = true;
-					} else {
-						document.getElementById('text_posY').disabled = false;
-					}
-
-					tab[0].style.top = newY + 'px';
-				});
-
-
-			}
-		});
-
-	
+var templateEditBtn1 = document.getElementById('templateEditBtn1');
+var elementEditBtn1 = document.getElementById('elementEditBtn1');
+var templateEditBtn = document.getElementById('templateEditBtn');
+var elementEditBtn = document.getElementById('elementEditBtn');
+var templateEditPane = document.getElementById('templateEditPane');
+var elementEditPane = document.getElementById('elementEditPane');
+var uniqIdText = 0;
+let selectedElement = null;
+let zoomFactor = 1;
+
+templateEditBtn1.addEventListener('click', function () {
+templateEditPane.classList.remove('hidden');
+elementEditPane.classList.add('hidden');
+templateEditBtn.classList.add('selected');
+elementEditBtn.classList.remove('selected');
+});
+
+elementEditBtn.addEventListener('click', function () {
+elementEditPane.classList.remove('hidden');
+templateEditPane.classList.add('hidden');
+elementEditBtn.classList.add('selected');
+templateEditBtn.classList.remove('selected');
+});
+
+templateEditBtn.click();
+
+let canvas = document.getElementById("canvas-container");
+let addTextBtn = document.getElementById("addText");
+let newTop = 0;
+let newLeft = 0;
+
+addTextBtn.addEventListener("click", function () {
+let newText = document.createElement("div");
+newText.classList.add("draggable");
+newText.innerText = "Déplacez-moi !";
+newText.style.position = "absolute";
+newText.style.top = "0px";
+newText.style.left = "0px";
+uniqIdText = "text" + Math.random().toString(36).substr(2, 9);
+newText.id = uniqIdText;
+canvas.appendChild(newText);
+
+makeDraggable(newText);
+
+// Créer l'élément en BDD
+createElementInDB(newText);
+});
+
+function makeDraggable(element) {
+let isDragging = false;
+let offsetX,
+offsetY;
+let canvasRect = canvas.getBoundingClientRect();
+
+element.addEventListener("mousedown", function (e) {
+isDragging = true;
+offsetX = (e.clientX - parseInt(window.getComputedStyle(element).left)) / zoomFactor;
+offsetY = (e.clientY - parseInt(window.getComputedStyle(element).top)) / zoomFactor;
+});
+
+document.addEventListener("mousemove", function (e) {
+if (isDragging) {
+newLeft = (e.clientX - offsetX * zoomFactor);
+newTop = (e.clientY - offsetY * zoomFactor);
+
+let elementRect = element.getBoundingClientRect();
+
+if (newLeft < 0) 
+newLeft = 0;
+
+
+
+if (newTop < 0) 
+newTop = 0;
+
+
+
+if (newLeft + elementRect.width > canvasRect.width * zoomFactor) {
+newLeft = canvasRect.width * zoomFactor - elementRect.width;
+}
+if (newTop + elementRect.height > canvasRect.height * zoomFactor) {
+newTop = canvasRect.height * zoomFactor - elementRect.height;
+}
+
+element.style.left = newLeft / zoomFactor + "px";
+element.style.top = newTop / zoomFactor + "px";
+
+if (selectedElement === element) {
+let sliderValue = Math.round((newLeft / canvasRect.width) * 100);
+let sliderValueY = Math.round((newTop / canvasRect.height) * 100);
+document.getElementById('text_posX').value = sliderValue;
+document.getElementById('text_posY').value = sliderValueY;
+}
+}
+});
+
+document.addEventListener("mouseup", function () {
+if (isDragging) {
+isDragging = false;
+updateElementInDB(element);
+}
+});
+
+element.addEventListener('click', function (event) {
+selectedElement = this;
+
+let canvasRect = canvas.getBoundingClientRect();
+let elementRect = selectedElement.getBoundingClientRect();
+let posX = Math.round(((elementRect.left - canvasRect.left) / canvasRect.width) * 100);
+let posY = Math.round(((elementRect.top - canvasRect.top) / canvasRect.height) * 100);
+document.getElementById('text_posX').value = posX;
+document.getElementById('text_posY').value = posY;
+});
+
+let textPosX = document.getElementById('text_posX');
+let textPosY = document.getElementById('text_posY');
+if (textPosX && textPosY) {
+textPosX.addEventListener('input', function () {
+selectedElement.style.left = this.value + '%';
+});
+textPosY.addEventListener('input', function () {
+selectedElement.style.top = this.value + '%';
+});
+}
+}
+
+function createElementInDB(element) {
+let data = {
+type: 'text', // ou 'image' ou 'qrcode' selon le type d'élément
+posX: element.style.left,
+posY: element.style.top,
+width: element.offsetWidth,
+height: element.offsetHeight,
+// Ajouter d'autres propriétés spécifiques à l'élément ici
+};
+g
+
+fetch('/create-template/add-element', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json'
+},
+body: JSON.stringify(data)
+}).then(response => {
+if (!response.ok) {
+throw new Error('Network response was not ok');
+}
+return response.json();
+}).then(data => {
+console.log('Response Data:', data);
+if (data.id) {
+element.dataset.id = data.id; // Assigner l'ID retourné par le serveur à l'élément
+} else {
+console.error('Error:', data.error);
+}
+}).catch(error => console.error('Error:', error));
+}
+
+function updateElementInDB(element) {
+if (! element.dataset.id) {
+console.error('Error: Element ID is not defined.');
+return;
+}
+
+let data = {
+id: element.dataset.id,
+posX: element.style.left,
+posY: element.style.top,
+width: element.offsetWidth,
+height: element.offsetHeight,
+// Ajouter d'autres propriétés spécifiques à l'élément ici
+};
+
+fetch(`/create-template/add-element/`, {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+'X-Requested-With': 'XMLHttpRequest'
+},
+body: JSON.stringify(data)
+}).then(response => {
+if (!response.ok) {
+throw new Error('Network response was not ok');
+}
+}).catch(error => console.error('Error:', error));
+}
+
+let templateWidth = document.getElementById('canvas-container').dataset.templateWidth;
+let templateHeight = document.getElementById('canvas-container').dataset.templateHeight;
+let canvaDiv = document.getElementById('canvas-container');
+
+let canvasElement = document.createElement('canvas');
+canvasElement.id = 'canvas';
+canvasElement.width = templateWidth;
+canvasElement.height = templateHeight;
+canvaDiv.appendChild(canvasElement);
+canvaDiv.style.position = 'absolute';
+
+let elements = document.querySelectorAll('.draggable');
+elements.forEach(element => {
+let elementRect = element.getBoundingClientRect();
+let canvasRect = canvas.getBoundingClientRect();
+
+if (parseInt(element.style.left) + elementRect.width > canvasRect.width * zoomFactor) {
+element.style.left = (canvasRect.width * zoomFactor - elementRect.width) / zoomFactor + 'px';
+}
+if (parseInt(element.style.top) + elementRect.height > canvasRect.height * zoomFactor) {
+element.style.top = (canvasRect.height * zoomFactor - elementRect.height) / zoomFactor + 'px';
+}
+if (parseInt(element.style.left) < 0) {
+element.style.left = '0px';
+}
+if (parseInt(element.style.top) < 0) {
+element.style.top = '0px';
+}
+});
+});
 	</script>
 
 	<style>
+		.selected {
+			background-color: #18534F;
+			color: white;
+		}
+
+		.canvas-area {
+			position: relative;
+			z-index: 1;
+			transition: top 0.3s ease;
+		}
+
+		.flex.mb-4.justify-around {
+			position: relative;
+			z-index: 2;
+		}
 		.slider {
 			-webkit-appearance: none;
 			appearance: none;
