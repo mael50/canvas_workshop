@@ -127,6 +127,9 @@ export default class extends Controller {
 
         document.addEventListener("mousemove", (e) => {
             if (isDragging) {
+                document.getElementById('text_width').disabled = false;
+				document.getElementById('text_height').disabled = false;
+
                 const canvas = document.getElementById("canvas");
 
                 const currentQrCode = e.target.closest(".qr-code");
@@ -321,6 +324,8 @@ export default class extends Controller {
             };
             reader.readAsDataURL(input.files[0]);
         }
+        
+
     }
 
     // Méthode pour rendre l'image draggable
@@ -337,7 +342,10 @@ export default class extends Controller {
 
         document.addEventListener("mousemove", (e) => {
             if (isDragging) {
+               this.handleRectOverlapping();
                 const canvas = document.getElementById("canvas");
+                
+
                 let newLeft = e.clientX - offsetX;
                 let newTop = e.clientY - offsetY;
 
@@ -363,10 +371,12 @@ export default class extends Controller {
     }
 
     addImageFormListeners() {
+
         const imagePosX = document.getElementById("image_posX");
         const imagePosY = document.getElementById("image_posY");
         const imageWidth = document.getElementById("image_width");
         const imageHeight = document.getElementById("image_height");
+
 
         if (imagePosX && imagePosY && imageWidth && imageHeight) {
             imagePosX.addEventListener("input", () => this.updateSelectedImage());
@@ -374,9 +384,36 @@ export default class extends Controller {
             imageWidth.addEventListener("input", () => this.updateSelectedImage());
             imageHeight.addEventListener("input", () => this.updateSelectedImage());
         }
+
+        this.handleRectOverlapping();
+
+    }
+
+    handleRectOverlapping() {
+        let element = document.querySelector('.draggable-image');
+        if (element) {
+            let elementRect = element.getBoundingClientRect();
+            let canvas = document.getElementById("canvas");
+            let canvasRect = canvas.getBoundingClientRect();
+
+            if (elementRect.right < canvasRect.right) {
+            element.style.width = this.value + '%';
+            document.getElementById('image_width').removeAttribute('disabled');
+            } else {
+            document.getElementById('image_width').setAttribute('disabled', 'true');
+            }
+
+            if (elementRect.bottom < canvasRect.bottom) {
+            element.style.height = this.value + '%';
+            document.getElementById('image_height').removeAttribute('disabled');
+            } else {
+            document.getElementById('image_height').setAttribute('disabled', 'true');
+            }
+        }
     }
 
     updateSelectedImage() {
+        this.handleRectOverlapping();
         const selectedImage = document.querySelector('.draggable-image');
         const canvas = document.getElementById("canvas");
         const imagePosX = document.getElementById("image_posX");
