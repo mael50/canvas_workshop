@@ -71,7 +71,7 @@ const config = {
             items: [
               {
                 label: 'Introduction',
-                to: '/docs/DocTechnique/Introduction/index',
+                to: '/docs/DocTechnique/Introduction',
               },
             ],
           },
@@ -80,7 +80,7 @@ const config = {
             items: [
               {
                 label: 'Introduction',
-                to: '/docs/DocUtilisateur/Introduction/index',
+                to: '/docs/DocUtilisateur/Introduction',
               },
             ],
           },

@@ -15,11 +15,16 @@ function HomepageHeader() {
           {siteConfig.title}
         </Heading>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
-        <div className={styles.buttons}>
+        <div className={styles.buttons} style={{ display: 'flex', gap: '1rem' }}>
           <Link
             className={clsx('button button--secondary button--lg', styles.getStarted)}
-            to="/docs/DocTechnique/Introduction/index">
+            to="/docs/DocTechnique/Introduction/">
             Documentation technique
+          </Link>
+          <Link
+            className={clsx('button button--secondary button--lg', styles.getStarted)}
+            to="/docs/DocUtilisateur/Introduction/">
+            Documentation utilisateur
           </Link>
         </div>
       </div>
