@@ -55,7 +55,7 @@
 				</div>
 
 				<div
-					id="canvas" class="canvas-area bg-white p-4 rounded shadow mt-4"><!-- Zone de drop pour le canvas -->
+					id="canvas" class="canvas-area bg-white p-4 rounded shadow mt-4" data-canva-width="{{ template.width }}" data-canva-height="{{ template.height }}">
 				</div>
 			</div>
 		</div>
@@ -72,8 +72,6 @@
 		}
 
 		.canvas-area {
-			width: 600px;
-			height: 400px;
 			border: 2px solid #333;
 			position: relative;
 			margin-top: 20px;
@@ -89,6 +87,11 @@
 		}
 	</style>
 	<script>
+		let canvas = document.getElementById("canvas");
+		let canvasWidth = canvas.getAttribute("data-canva-width");
+		let canvasHeight = canvas.getAttribute("data-canva-height");
+		canvas.style.width = canvasWidth + "px";
+		canvas.style.height = canvasHeight + "px";
 		document.addEventListener('DOMContentLoaded', function () {
 			var templateEditBtn1 = document.getElementById('templateEditBtn1');
 			var elementEditBtn1 = document.getElementById('elementEditBtn1');
@@ -401,7 +404,7 @@
 					console.log(canvasRect)
 					let largeur=elementRect.left+elementRect.width;
 
-					if(intElement> = intCanvas) {
+					if(intElement>= intCanvas) {
 						document.getElementById('text_posX').disabled = true;
 					}
 					element.style.left = this.value + '%';
@@ -483,4 +486,3 @@
 				}
 			</style>
 		{% endblock %}
-	{% endblock %}
