@@ -13,6 +13,7 @@ use App\Entity\Template;
 use App\Form\QRCodeType;
 use App\Form\ElementType;
 use App\Form\TemplateType;
+use App\Repository\ElementRepository;
 use App\Service\ImageStorage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +37,7 @@ class CreateTemplateController extends AbstractController
 
     // Dans votre méthode createTemplate
     #[Route('/create-template/{id}', name: 'create_template', methods: ['GET', 'POST'])]
-    public function createTemplate(Request $request, EntityManagerInterface $entityManager, string $id = null): Response
+    public function createTemplate(Request $request, EntityManagerInterface $entityManager, string $id = null, ElementRepository $elementRepository): Response
     {
         $template = null;
         if ($id) {
@@ -47,6 +48,8 @@ class CreateTemplateController extends AbstractController
         if (!$template) {
             $template = new Template();
         }
+
+        $elements = $elementRepository->findBy(['template' => $template]);
 
         $form = $this->createForm(TemplateType::class, $template);
 
@@ -120,6 +123,7 @@ class CreateTemplateController extends AbstractController
             'textForm' => $textForm->createView(),
             'qrCodeForm' => $qrCodeForm->createView(),
             'template' => $template,
+            'elements' => $elements,
         ]);
     }
 
@@ -202,7 +206,8 @@ class CreateTemplateController extends AbstractController
                 ->setPosY($data['posY'])
                 ->setWidth($data['width'])
                 ->setHeight($data['height'])
-                ->setInputAssocie($data['inputAssocie']);
+                ->setInputAssocie($data['inputAssocie'])
+                ->setTemplate($entityManager->getRepository(Template::class)->find($data['templateId']));
 
             $entityManager->persist($element);
             $entityManager->flush();

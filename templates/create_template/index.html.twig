@@ -60,7 +60,27 @@
 				<!--<button id="addText" class="bg-green-500 text-white py-2 px-4 rounded">Ajouter du texte</button>-->
 
 				<div
-					id="canvas" class="canvas-area bg-white p-4 rounded shadow mt-4"><!-- Zone de drop pour le canvas -->
+					id="canvas" class="canvas-area bg-white p-4 rounded shadow mt-4">
+					<!-- Zone de drop pour le canvas -->
+					{% for element in elements %}
+						<div class="element"
+							style="
+								position: absolute;
+								left: {{ element.posX }}px;
+								top: {{ element.posY }}px;
+								width: {{ element.width }}px;
+								height: {{ element.height }}px;
+								color: {{ element.textColor }};
+								background-color: {{ element.backgroundColor }};
+								font-size: {{ element.fontSize }}px;
+								font-family: {{ element.fontFamily }};
+								text-align: {{ element.align }};
+								font-weight: {{ element.bold ? 'bold' : 'normal' }};
+								font-style: {{ element.italic ? 'italic' : 'normal' }};
+							">
+							{{ element.placeholder }}
+						</div>
+					{% endfor %}
 				</div>
 			</div>
 		</div>
@@ -180,6 +200,7 @@
 			async function createTextElement(element) {
 				// ajouter en bdd le text en utilisant ajax
 				let data = {
+					'templateId': {{ template.id }},
 					'type': 'text',
 					'width': parseFloat(element.style.width),
 					'height': parseFloat(element.style.height),
@@ -213,6 +234,7 @@
 				// ajouter en bdd le text en utilisant ajax
 				let data = {
 					'id': element.id,
+					'templateId': {{ template.id }},
 					'type': 'text',
 					'width': parseFloat(element.style.width),
 					'height': parseFloat(element.style.height),
@@ -358,8 +380,8 @@
 						//document.querySelector('input[type=range]').value = sliderValue;
 						document.getElementById('text_posX').value = sliderValue;
 						document.getElementById('text_posY').value = sliderValueY;
-						document.getElementById('text_width').value =(element.clientWidth/canvasRect.width) * 100;
-						document.getElementById('text_height').value =(element.clientHeight/canvasRect.height) * 100;
+						document.getElementById('text_width').value =element.clientWidth;
+						document.getElementById('text_height').value =element.clientHeight;
 						document.getElementById('text_placeholder').value =element.textContent;
 						document.getElementById('text_textColor').value= rgbToHex(element.style.color);
 						document.getElementById('text_backgroundColor').value= rgbToHex(element.style.backgroundColor);
@@ -532,8 +554,8 @@
 							}
 
 							// Mise à jour des sliders de largeur et hauteur
-							document.getElementById('text_width').value = (tab[0].offsetWidth / canvas.offsetWidth) * 100;
-							document.getElementById('text_height').value = (tab[0].offsetHeight / canvas.offsetHeight) * 100;
+							document.getElementById('text_width').value = tab[0].offsetWidth;
+							document.getElementById('text_height').value = tab[0].offsetHeight;
 						}, 50); // Délai pour permettre au navigateur d'appliquer la nouvelle taille de police
 						updateTextElement(tab[0]);
 					});
