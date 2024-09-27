@@ -50,7 +50,6 @@ export default class extends Controller {
     
 
     setIntoElementEdit() {
-        console.log('setIntoElementEdit');
         const elementEditPane = document.getElementById('elementEditPane');
         const templateEditPane = document.getElementById('templateEditPane');
         const elementEditBtn = document.getElementById('elementEditBtn');
@@ -169,11 +168,6 @@ export default class extends Controller {
         const qrCodeWidth = document.getElementById("qr_code_width");
         const qrCodeHeight = document.getElementById("qr_code_height");
         const qrCodeText = document.getElementById("qr_code_text");
-        console.log('qrCodePosX', qrCodePosX);
-        console.log('qrCodePosY', qrCodePosY);
-        console.log('qrCodeWidth', qrCodeWidth);
-        console.log('qrCodeHeight', qrCodeHeight);
-        console.log('qrCodeText', qrCodeText);
 
         if (qrCodePosX && qrCodePosY && qrCodeWidth && qrCodeHeight && qrCodeText) {
             qrCodePosX.addEventListener("input", () => this.updateSelectedQrCode());
@@ -220,8 +214,6 @@ export default class extends Controller {
         const qrCodeText = document.getElementById("qr_code_text");
 
         if (selectedQrCode && qrCodePosX && qrCodePosY && qrCodeWidth && qrCodeHeight) {
-            console.log('in condition');
-            console.log('selectedQrCode', selectedQrCode);
             selectedQrCode.style.left = (qrCodePosX.value / 100 * canvas.offsetWidth) + "px";
             selectedQrCode.style.top = (qrCodePosY.value / 100 * canvas.offsetHeight) + "px";
             selectedQrCode.style.width = (qrCodeWidth.value / 100 * canvas.offsetWidth) + "px";
@@ -250,9 +242,7 @@ export default class extends Controller {
         const canvas = document.getElementById("canvas");
         if (canvas) {
             const existingQrCode = canvas.querySelector(".qr-code");
-            console.log('existingQrCode', existingQrCode);
             if (existingQrCode) {
-                console.log('existingQrCode', existingQrCode);
                 existingQrCode.remove();
             }
     
