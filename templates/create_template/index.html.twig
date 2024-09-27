@@ -157,17 +157,50 @@
 
 				canvas.appendChild(newText);
 
-				createTextElement(newText);
 
 				makeDraggable(newText);
 				
 				// Ajouter l'écouteur d'événements
 				newText.addEventListener('click', elementT);
+				createTextElement(newText);
 			});
 
 			async function createTextElement(element) {
 				// ajouter en bdd le text en utilisant ajax
 				let data = {
+					'type': 'text',
+					'width': parseFloat(element.style.width),
+					'height': parseFloat(element.style.height),
+					'posY': parseFloat(element.style.top),
+					'posX': parseFloat(element.style.left),
+					'textColor': element.style.color,
+					'backgroundColor': element.style.backgroundColor,
+					'fontFamily': element.style.fontFamily,
+					'fontSize': parseFloat(element.style.fontSize),
+					'align': element.style.textAlign,
+					'isBold': document.getElementById('text_bold') ? document.getElementById('text_bold').checked : false,
+					'isItalic': document.getElementById('text_italic') ? document.getElementById('text_italic').checked : false,
+					'placeHolder': element.innerText,
+					'inputAssocie': document.getElementById('text_inputAssocie') ? document.getElementById('text_inputAssocie').value : '',
+				};
+
+				let response = await fetch("/create-element/add-element", {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(data),
+				});
+
+				let result = await response.json();
+				element.id = result.id;
+				console.log(result);
+			}
+
+			async function updateTextElement(element) {
+				// ajouter en bdd le text en utilisant ajax
+				let data = {
+					'id': element.id,
 					'type': 'text',
 					'width': parseFloat(element.style.width),
 					'height': parseFloat(element.style.height),
@@ -193,7 +226,6 @@
 				});
 
 				let result = await response.json();
-				element.id = result.id;
 				console.log(result);
 			}
 
@@ -245,6 +277,7 @@
 				offsetY = e.clientY - parseInt(window.getComputedStyle(element).top);
 
 				updateElement(element);
+				updateTextElement(element);
 
 			});
 
@@ -316,22 +349,27 @@
 						//disable text_width
 						document.getElementById('text_height').disabled = true;
 					}
+
+					updateTextElement(element);
 				});
 
 				document.getElementById('text_inputAssocie').addEventListener('input', function() {
 					element.innerText = this.value;
+					updateTextElement(element);
 				});
 
 				document.getElementById('text_placeholder').addEventListener('input', function() {
 					element.innerText = this.value;
-
+					updateTextElement(element);
 				});
 				document.getElementById('text_textColor').addEventListener('input', function() {
 					element.style.color = this.value;
+					updateTextElement(element);
 				});
 
 				document.getElementById('text_backgroundColor').addEventListener('input', function() {
 					element.style.backgroundColor = this.value;
+					updateTextElement(element);
 				});
 
 				document.getElementById('text_align').addEventListener('input', function() {
@@ -381,6 +419,7 @@
 						element.style.justifyContent = 'flex-end'; // Aligné à droite
 						element.style.alignItems = 'flex-end'; // Aligné en bas
 					}
+					updateTextElement(element);
 				});
 
 				document.getElementById('text_bold').addEventListener('change', function() {
@@ -389,6 +428,7 @@
 					} else {
 						element.style.fontWeight = 'normal';
 					}
+					updateTextElement(element);
 				});
 
 				document.getElementById('text_italic').addEventListener('change', function() {
@@ -397,14 +437,17 @@
 					} else {
 						element.style.fontStyle = 'normal'; // Revenir au texte normal
 					}
+					updateTextElement(element);
 				});
 
 				document.getElementById('text_fontSize').addEventListener('input', function() {
 					element.style.fontSize = this.value + 'px';
+					updateTextElement(element);
 				});
 
 				document.getElementById('text_fontFamily').addEventListener('change', function() {
 					element.style.fontFamily = this.value;
+					updateTextElement(element);
 				});
 			}
 
@@ -455,7 +498,9 @@
 						document.getElementById('text_posX').disabled = true;
 					}
 					element.style.left = this.value + '%';
+					updateTextElement(element);
 				});
+
 
 			}
 			function changePosY(element) {
@@ -464,6 +509,7 @@
 				if (elementRect.bottom < canvasRect.bottom) {
 					document.getElementById('text_posY').addEventListener('input', function () {
 					element.style.top = this.value + '%';
+					updateTextElement(element);
 				});
 				}
 			}
