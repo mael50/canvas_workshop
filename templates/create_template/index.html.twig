@@ -15,8 +15,7 @@
 						<button id="templateEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2 selected">Paramètres du template</button>
 						<button id="elementEditBtn" class="bg-clear text-primary py-2 px-4 rounded w-1/2">Propriété de l'élément</button>
 					</div>
-					{{ form_start(form) }}
-
+					{{ form_start(form, {'action': path('save_template', {'id': template.id}), 'method': 'POST'}) }}
 					{{ form_widget(form) | raw }}
 					<label for="color" class="text-white mt-2">Couleur :</label>
 					<div class="flex items-center flex-row flex-wrap gap-3 mt-3">
@@ -24,6 +23,7 @@
 							<input type="color" name="color" value="{{ color }}" class="w-8 h-8" disabled>
 						{% endfor %}
 					</div>
+					<button type="submit" class="save-template-btn rounded-lg border border-secondary px-4 py-2 text-primary font-bold block w-fit mt-5">Enregistrer le template</button>
 					{{ form_end(form) }}
 				</div>
 				<div id="elementEditPane" class="tab-pane bg-secondary p-4 rounded shadow hidden mt-5">
@@ -35,7 +35,6 @@
 						<turbo-frame id="formContainer" data-form-target="formContainer" class="w-full"><!-- Le formulaire sera injecté ici --></turbo-frame>
 					</div>
 				</div>
-				<a href="{{ path('app_home', {'id': template.id}) }}" class="rounded-lg border border-secondary px-4 py-2 text-primary font-bold block w-fit mt-5">Enregistrer le template</a>
 			</div>
 
 			<div class="w-2/3 pl-4">

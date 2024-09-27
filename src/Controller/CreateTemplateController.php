@@ -207,4 +207,28 @@ class CreateTemplateController extends AbstractController
 
         return new JsonResponse(['error' => 'Element not found'], Response::HTTP_BAD_REQUEST);
     }
+
+    #[Route('/save-template/{id}', name: 'save_template', methods: ['POST'])]
+    public function saveTemplate(Request $request, EntityManagerInterface $entityManager, int $id): Response
+    {
+        $template = $entityManager->getRepository(Template::class)->find($id);
+
+        if (!$template) {
+            throw $this->createNotFoundException('Template not found');
+        }
+
+        $form = $this->createForm(TemplateType::class, $template);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $template->setUpdatedAt(new \DateTimeImmutable());
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Template mis à jour avec succès.');
+        } else {
+            $this->addFlash('error', 'Une erreur est survenue lors de la mise à jour du template.');
+        }
+
+        return $this->redirectToRoute('app_home');
+    }
 }
