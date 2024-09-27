@@ -85,10 +85,10 @@ class CreateTemplateController extends AbstractController
 
             // Récupérer le fichier uploadé
             $uploadedFile = $imageForm->get('src')->getData();
-
+            $templateColors = $template->getColor();
             if ($uploadedFile) {
                 // Utiliser le service imageStorage pour stocker le fichier
-                $newFileName = $this->imageStorage->storeFile($uploadedFile);
+                $newFileName = $this->imageStorage->storeFile($uploadedFile, $templateColors);
 
                 // Mettre à jour le chemin du fichier dans l'entité Image
                 $image->setSrc($newFileName);
