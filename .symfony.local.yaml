@@ -1,3 +1,6 @@
 workers:
   tailwind:
     cmd: ['symfony', 'console', 'tailwind:build', '--watch']
+  
+  docusaurus:
+    cmd: ['npm', 'start', '--prefix', 'docs']
