@@ -123,7 +123,7 @@ class CreateTemplateController extends AbstractController
         ]);
     }
 
-    #[Route('/create-template/add-element', name: 'create_template_add_element', methods: ['POST'])]
+    #[Route('/create-element/add-element', name: 'create_template_add_element', methods: ['POST'])]
     public function addElement(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
         $this->logger->info('addElement called');
@@ -140,10 +140,13 @@ class CreateTemplateController extends AbstractController
             $element = $entityManager->getRepository(Element::class)->find($id);
 
             if ($element) {
-                $element->setPosX($data['posX'])
-                    ->setPosY($data['posY'])
-                    ->setWidth($data['width'])
-                    ->setHeight($data['height']);
+                if (isset($data['posX'], $data['posY'], $data['width'], $data['height'])) {
+                    $element->setPosX($data['posX'])
+                        ->setPosY($data['posY'])
+                        ->setWidth($data['width'])
+                        ->setHeight($data['height'])
+                        ->setInputAssocie($data['inputAssocie']);
+                }
 
                 // si c'est une image
                 if ($data['type'] === 'image') {
@@ -184,8 +187,8 @@ class CreateTemplateController extends AbstractController
                 $element->setBackgroundColor($data['backgroundColor']);
                 $element->setPlaceHolder($data['placeHolder']);
                 $element->setAlign($data['align']);
-                $element->isBold($data['isBold']);
-                $element->isItalic($data['isItalic']);
+                $element->setBold($data['isBold']); // Use setBold instead of isBold
+                $element->setItalic($data['isItalic']); // Use setItalic instead of isItalic
                 $element->setFontSize($data['fontSize']);
                 $element->setFontFamily($data['fontFamily']);
             } elseif ($type === 'qrcode') {
@@ -198,7 +201,8 @@ class CreateTemplateController extends AbstractController
             $element->setPosX($data['posX'])
                 ->setPosY($data['posY'])
                 ->setWidth($data['width'])
-                ->setHeight($data['height']);
+                ->setHeight($data['height'])
+                ->setInputAssocie($data['inputAssocie']);
 
             $entityManager->persist($element);
             $entityManager->flush();

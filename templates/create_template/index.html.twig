@@ -126,6 +126,7 @@
 			let tab =[]
 
 			addTextBtn.addEventListener("click", function () {
+				// Créer un nouvel élément de texte
 				let newText = document.createElement("div");
 				newText.classList.add("draggable");
 				newText.innerText = "Déplacez-moi !";
@@ -146,11 +147,47 @@
 
 				canvas.appendChild(newText);
 
+				createTextElement(newText);
+
 				makeDraggable(newText);
 				
 				// Ajouter l'écouteur d'événements
 				newText.addEventListener('click', elementT);
 			});
+
+			async function createTextElement(element) {
+				// ajouter en bdd le text en utilisant ajax
+				let data = {
+					'type': 'text',
+					'width': parseFloat(element.style.width),
+					'height': parseFloat(element.style.height),
+					'posY': parseFloat(element.style.top),
+					'posX': parseFloat(element.style.left),
+					'textColor': element.style.color,
+					'backgroundColor': element.style.backgroundColor,
+					'fontFamily': element.style.fontFamily,
+					'fontSize': parseFloat(element.style.fontSize),
+					'align': element.style.textAlign,
+					'isBold': document.getElementById('text_bold').checked,
+					'isItalic': document.getElementById('text_italic').checked,
+					'placeHolder': element.innerText,
+					'inputAssocie': document.getElementById('text_inputAssocie').value,
+				};
+
+				let response = await fetch("/create-element/add-element", {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(data),
+				});
+
+				let result = await response.json();
+				element.id = result.id;
+				console.log(result);
+			}
+
+
 			function elementT(event){
 					tab.shift();
 					tab.push(event.target);
