@@ -57,9 +57,15 @@ class TextType extends ElementType
                 'label' => 'Alignement:',
                 'label_attr' => ['class' => 'text-white mt-2'],  // Classe pour rendre le label blanc
                 'choices' => [
-                    'left' => 'left',
-                    'center' => 'center',
-                    'right' => 'right',
+                    'top-left' => 'top-left',
+                    'top-center' => 'top-center',
+                    'top-right' => 'top-right',
+                    'center-left' => 'center-left',
+                    'center-center' => 'center-center',
+                    'center-right' => 'center-right',
+                    'bottom-left' => 'bottom-left',
+                    'bottom-center' => 'bottom-center',
+                    'bottom-right' => 'bottom-right',
                     'justify' => 'justify',
 
                 ],

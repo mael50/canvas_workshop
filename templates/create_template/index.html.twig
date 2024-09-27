@@ -95,25 +95,17 @@
 		}
 	</style>
 	<script>
-<<<<<<< HEAD
-			document.addEventListener('DOMContentLoaded', function () {
-=======
 		document.addEventListener('DOMContentLoaded', function () {
->>>>>>> e96f113a4d4c516dc41aa3e118da2968479ba99b
 			var templateEditBtn1 = document.getElementById('templateEditBtn1');
 			var elementEditBtn1 = document.getElementById('elementEditBtn1');
 			var templateEditBtn = document.getElementById('templateEditBtn');
 			var elementEditBtn = document.getElementById('elementEditBtn');
 			var templateEditPane = document.getElementById('templateEditPane');
 			var elementEditPane = document.getElementById('elementEditPane');
-<<<<<<< HEAD
-
-=======
 			var uniqIdText = 0;
 
 
 
->>>>>>> e96f113a4d4c516dc41aa3e118da2968479ba99b
 			templateEditBtn1.addEventListener('click', function () {
 				templateEditPane.classList.remove('hidden');
 				elementEditPane.classList.add('hidden');
@@ -137,20 +129,6 @@
 			let count = 0;
 			let tab =[]
 
-<<<<<<< HEAD
-			// Ajouter un nouvel élément texte
-			addTextBtn.addEventListener("click", function () {
-				let newText = document.createElement("div");
-				newText.classList.add("draggable");
-				newText.innerText = "Déplacez-moi ! "+count;
-				newText.style.position = "absolute";
-				newText.style.top = "0px";
-				newText.style.left = "0px";
-				newText.id = "text" + count;
-				count++;
-
-				canvas.appendChild(newText);
-=======
 			addTextBtn.addEventListener("click", function () {
 				let newText = document.createElement("div");
 				newText.classList.add("draggable");
@@ -166,12 +144,12 @@
 				newText.style.fontFamily = "Arial";
 				newText.style.fontSize = "16px";
 				newText.style.textAlign = "left";
-				uniqIdText="text"+Math.random().toString(36).substr(2, 9);
-				newText.id =uniqIdText;
+				uniqIdText="text"+count;
+				count++;
+				newText.id=uniqIdText;
 
 				canvas.appendChild(newText);
 
->>>>>>> e96f113a4d4c516dc41aa3e118da2968479ba99b
 				makeDraggable(newText);
 				
 				// Ajouter l'écouteur d'événements
@@ -187,12 +165,11 @@
 
 
 			function selectElement(element) {
-				console.log(tab);
 				if (currentElement) {
 					cur=currentElement
 					currentElement=null;
 					// Désélectionner l'élément précédent (si nécessaire)
-					cur.style.color='black';
+					cur.style.color=document.getElementById('text_textColor').value;
 					cur.classList.remove('selected-element'); 
 				}
 				currentElement = element;  // Mettre à jour l'élément sélectionné
@@ -204,6 +181,14 @@
 				let topPercentage = (parseInt(currentElement.style.top) / canvasRect.height) * 100;
 				document.getElementById('text_posX').value = Math.round(leftPercentage);
 				document.getElementById('text_posY').value = Math.round(topPercentage);
+				document.getElementById('text_width').value =(currentElement.clientWidth/canvasRect.width) * 100;
+				document.getElementById('text_height').value =(currentElement.clientHeight/canvasRect.height) * 100;
+				document.getElementById('text_inputAssocie').value =currentElement.textContent;
+				document.getElementById('text_textColor').value=currentElement.style.color;
+				
+
+
+
 				
 				// Mettre à jour les sliders pour changer la position de l'élément sélectionné
 				if (currentElement.classList.contains('selected-element')){
@@ -223,20 +208,12 @@
 					isDragging = true;
 					offsetX = e.clientX - parseInt(window.getComputedStyle(element).left);
 					offsetY = e.clientY - parseInt(window.getComputedStyle(element).top);
-<<<<<<< HEAD
-=======
-
 					updateElement(element);
 
->>>>>>> e96f113a4d4c516dc41aa3e118da2968479ba99b
 				});
 
 				document.addEventListener("mousemove", function (e) {
 					if (isDragging) {
-<<<<<<< HEAD
-						let newLeft = e.clientX - offsetX;
-						let newTop = e.clientY - offsetY;
-=======
 						document.getElementById('text_width').disabled = false;
 						document.getElementById('text_height').disabled = false;
 						document.getElementById('text_posX').disabled=false;
@@ -244,7 +221,6 @@
 						newTop = e.clientY - offsetY;
 
 						// Vérifier les limites du canevas
->>>>>>> e96f113a4d4c516dc41aa3e118da2968479ba99b
 						let elementRect = element.getBoundingClientRect();
 
 						// Limiter à la zone du canevas
@@ -260,16 +236,6 @@
 						element.style.left = newLeft + "px";
 						element.style.top = newTop + "px";
 
-<<<<<<< HEAD
-						// Mettre à jour les sliders avec la position actuelle
-						let sliderValueX = Math.round((newLeft / canvasRect.width) * 100);
-						let sliderValueY = Math.round((newTop / canvasRect.height) * 100);
-						document.getElementById('text_posX').value = sliderValueX;
-						document.getElementById('text_posY').value = sliderValueY;
-					}
-				});
-
-=======
 						// Mettre à jour la valeur du slider en fonction de la position X
 						// Vous pouvez choisir la logique de mapping que vous préférez ici
 						let sliderValue = Math.round((newLeft / canvasRect.width) * 100); // Convertir la position en pourcentage
@@ -277,6 +243,15 @@
 						//document.querySelector('input[type=range]').value = sliderValue;
 						document.getElementById('text_posX').value = sliderValue;
 						document.getElementById('text_posY').value = sliderValueY;
+						document.getElementById('text_width').value =(element.clientWidth/canvasRect.width) * 100;
+						document.getElementById('text_height').value =(element.clientHeight/canvasRect.height) * 100;
+						document.getElementById('text_inputAssocie').value =element.textContent;
+						document.getElementById('text_textColor').value=element.style.color;
+
+
+
+
+						
 
 
 
@@ -285,21 +260,12 @@
 
 				function updateElement(element){
 					//mettre a jour la largeur selon le slider
-					console.log(element);
 					document.getElementById('text_width').addEventListener('input', function() {
 						let canvasRect = canvas.getBoundingClientRect();
 						let elementRect = element.getBoundingClientRect();
-
-						console.log('Element');
-						console.log(elementRect);
-						console.log('Canva' );
-
-						console.log(canvasRect);
-						console.log(element.height)
-
 						if(elementRect.right< canvasRect.right ){
 
-							element.style.width = this.value + '%';
+							tab[0].style.width = this.value + '%';
 
 						}
 						else{
@@ -314,7 +280,7 @@
 
 						if(elementRect.bottom< canvasRect.bottom ){
 
-							element.style.height = this.value + '%';
+							tab[0].style.height = this.value + '%';
 
 						}
 						else{
@@ -324,144 +290,155 @@
 					});
 
 					document.getElementById('text_inputAssocie').addEventListener('input', function() {
-						element.innerText = this.value;
+						tab[0].innerText = this.value;
 					});
 
 					document.getElementById('text_placeholder').addEventListener('input', function() {
-						element.innerText = this.value;
+						tab[0].innerText = this.value;
 
 					});
 					document.getElementById('text_textColor').addEventListener('input', function() {
-						element.style.color = this.value;
+						tab[0].style.color = this.value;
 					});
 
 					document.getElementById('text_backgroundColor').addEventListener('input', function() {
-						element.style.backgroundColor = this.value;
+						tab[0].style.backgroundColor = this.value;
 					});
 
-					document.getElementById('text_align').addEventListener('input', function() {
-						element.style.display = 'flex';
+				document.getElementById('text_align').addEventListener('input', function() {
+						// Désactiver flex pour permettre le positionnement libre lors du déplacement
+						element.style.display = ''; // Réinitialiser display
 
-						element.style.alignItems = 'center'; // Aligner verticalement par défaut
-						element.style.position = 'relative'; // Assurez-vous que l'élément est positionné
-
-						// Top alignments
-						if (this.value == 'top-left') {
-							element.style.justifyContent = 'flex-start'; // Aligné à gauche
-							element.style.alignItems = 'flex-start'; // Aligné en haut
+						// Aligner seulement dans les cas spécifiques
+						if (this.value === 'top-left') {
+							element.style.display = 'flex';
+							element.style.justifyContent = 'flex-start';
+							element.style.alignItems = 'flex-start';
 						}
-						if (this.value == 'top-center') {
-							element.style.justifyContent = 'center'; // Aligné au centre
-							element.style.alignItems = 'flex-start'; // Aligné en haut
+						if (this.value === 'top-center') {
+							element.style.display = 'flex';
+							element.style.justifyContent = 'center';
+							element.style.alignItems = 'flex-start';
 						}
-						if (this.value == 'top-right') {
-							element.style.justifyContent = 'flex-end'; // Aligné à droite
-							element.style.alignItems = 'flex-start'; // Aligné en haut
+						if (this.value === 'top-right') {
+							element.style.display = 'flex';
+							element.style.justifyContent = 'flex-end';
+							element.style.alignItems = 'flex-start';
 						}
-
-						// Middle alignments
-						if (this.value == 'center-left') {
-							element.style.justifyContent = 'flex-start'; // Aligné à gauche
-							      // Aligné au milieu verticalement
+						if (this.value === 'center-left') {
+							element.style.display = 'flex';
+							element.style.justifyContent = 'flex-start';
+							element.style.alignItems = 'center';
 						}
-
-						if (this.value == 'center-center') {
-							element.style.justifyContent = 'center';       // Aligné au milieu verticalement
+						if (this.value === 'center-center') {
+							element.style.display = 'flex';
+							element.style.justifyContent = 'center';
+							element.style.alignItems = 'center';
 						}
-
-						if (this.value == 'center-right') {
-							element.style.justifyContent = 'flex-end';       // Aligné au milieu verticalement
+						if (this.value === 'center-right') {
+							element.style.display = 'flex';
+							element.style.justifyContent = 'flex-end';
+							element.style.alignItems = 'center';
 						}
-
-						// Bottom alignments
-						if (this.value == 'bottom-left') {
-							element.style.justifyContent = 'flex-start'; // Aligné à gauche
-							element.style.alignItems = 'flex-end'; // Aligné en bas
+						if (this.value === 'bottom-left') {
+							element.style.display = 'flex';
+							element.style.justifyContent = 'flex-start';
+							element.style.alignItems = 'flex-end';
 						}
-						if (this.value == 'bottom-center') {
-							element.style.justifyContent = 'center'; // Aligné au centre
-							element.style.alignItems = 'flex-end'; // Aligné en bas
+						if (this.value === 'bottom-center') {
+							element.style.display = 'flex';
+							element.style.justifyContent = 'center';
+							element.style.alignItems = 'flex-end';
 						}
-						if (this.value == 'bottom-right') {
-							element.style.justifyContent = 'flex-end'; // Aligné à droite
-							element.style.alignItems = 'flex-end'; // Aligné en bas
+						if (this.value === 'bottom-right') {
+							element.style.display = 'flex';
+							element.style.justifyContent = 'flex-end';
+							element.style.alignItems = 'flex-end';
 						}
 					});
 					document.getElementById('text_bold').addEventListener('change', function() {
 						if (this.checked) {
-							element.style.fontWeight = 'bold';
+							tab[0].style.fontWeight = 'bold';
 						} else {
-							element.style.fontWeight = 'normal';
+							tab[0].style.fontWeight = 'normal';
 						}
 					});
 
 					document.getElementById('text_italic').addEventListener('change', function() {
 						if (this.checked) {
-							element.style.fontStyle = 'italic'; // Appliquer l'italique
+							tab[0].style.fontStyle = 'italic'; // Appliquer l'italique
 						} else {
-							element.style.fontStyle = 'normal'; // Revenir au texte normal
+							tab[0].style.fontStyle = 'normal'; // Revenir au texte normal
 						}
 					});
 
 					document.getElementById('text_fontSize').addEventListener('input', function() {
 						element.style.fontSize = this.value + 'px';
+
+						// Attendre un petit délai pour que le navigateur applique la nouvelle taille de texte
+						setTimeout(function() {
+							// Obtenez les dimensions actuelles de l'élément texte
+							let elementRect = element.getBoundingClientRect();
+							let canvasRect = canvas.getBoundingClientRect();
+
+							// Ajuster la largeur
+							if (element.scrollWidth >= elementRect.width) {
+								// Si le texte dépasse la largeur et que l'élément ne dépasse pas le canvas
+								if (elementRect.left + element.scrollWidth <= canvasRect.width) {
+									element.style.width = element.scrollWidth + 'px';
+								}
+							}
+
+							// Ajuster la hauteur
+							if (element.scrollHeight >= elementRect.height) {
+								// Si le texte dépasse la hauteur et que l'élément ne dépasse pas le canvas
+								if (elementRect.top + element.scrollHeight <= canvasRect.height) {
+									element.style.height = element.scrollHeight + 'px';
+								}
+							}
+
+							// Mise à jour des sliders de largeur et hauteur
+							document.getElementById('text_width').value = (element.offsetWidth / canvas.offsetWidth) * 100;
+							document.getElementById('text_height').value = (element.offsetHeight / canvas.offsetHeight) * 100;
+						}, 50); // Délai pour permettre au navigateur d'appliquer la nouvelle taille de police
 					});
 
 					document.getElementById('text_fontFamily').addEventListener('change', function() {
-						element.style.fontFamily = this.value;
+						tab[0].style.fontFamily = this.value;
 					});
 
 
 
 				}
 
->>>>>>> e96f113a4d4c516dc41aa3e118da2968479ba99b
 				document.addEventListener("mouseup", function () {
 					isDragging = false;
 
 				});
-<<<<<<< HEAD
-=======
 
 
 				document.getElementById(uniqIdText).addEventListener('click', function(event) {
 					// Récupérer l'élément cible
 
 					const currentTarget = event.target;
-					console.log(currentTarget);
 
 					let tab=[];
 
 
 					if (currentTarget.classList.contains('draggable')) {
 						tab.push(currentTarget);
-						console.log(tab);
 						changePosX(tab[0]);
 						changePosY(tab[0]);
 						tab=[];
-						console.log(tab);
 					}
 
 				});
 				//delete
 
->>>>>>> e96f113a4d4c516dc41aa3e118da2968479ba99b
 			}
 
-			// Fonction pour changer la position X à partir du slider
-			function changePosX() {
-				document.getElementById('text_posX').addEventListener('input', function () {
-					tab[0].style.left = this.value + '%';
-				});
-			}
+			
 
-<<<<<<< HEAD
-			// Fonction pour changer la position Y à partir du slider
-			function changePosY() {
-				document.getElementById('text_posY').addEventListener('input', function () {
-					tab[0].style.top = this.value + '%';
-				});
-=======
 
 
 			function changePosX(element){
@@ -469,33 +446,49 @@
 				let elementRect = element.getBoundingClientRect();
 
 				document.getElementById('text_posX').addEventListener('input', function() {
+					// Met à jour la position X en pourcentage
+					let newX = (this.value / 100) * canvasRect.width;
 
-					//convertie en entier
-					let intElement = parseInt(elementRect.right);
-					let intCanvas = parseInt(canvasRect.right);
-					console.log(intElement);
-					console.log(intCanvas);
-					console.log(elementRect)
-					console.log(canvasRect)
-					let largeur=elementRect.left+elementRect.width;
-
-					if(intElement>= intCanvas ){
-						document.getElementById('text_posX').disabled=true;
+					// Vérifie si l'élément est hors des limites du canvas à droite
+					if (newX + elementRect.width > canvasRect.width) {
+						newX = canvasRect.width - elementRect.width; // Limite à la droite du canvas
+						document.getElementById('text_posX').disabled = true; // Désactiver l'input
 					}
-					element.style.left = this.value + '%';
+					// Vérifie si l'élément est hors des limites à gauche
+					else if (newX < 0) {
+						newX = 0; // Limite à la gauche du canvas
+						document.getElementById('text_posX').disabled = true; // Désactiver l'input
+					}
+					else {
+						document.getElementById('text_posX').disabled = false; // Activer l'input si l'élément est dans les limites
+					}
+
+					// Applique la nouvelle position en pixels
+					tab[0].style.left = newX + 'px';
 				});
+
 
 			}
 			function changePosY(element){
 				let canvasRect = canvas.getBoundingClientRect();
 				let elementRect = element.getBoundingClientRect();
-				if(elementRect.bottom< canvasRect.bottom ){
-					document.getElementById('text_posY').addEventListener('input', function() {
-						element.style.top = this.value + '%';
-					});
-				}
+				document.getElementById('text_posY').addEventListener('input', function() {
+					let newY = (this.value / 100) * canvasRect.height;
 
->>>>>>> e96f113a4d4c516dc41aa3e118da2968479ba99b
+					if (newY + elementRect.height > canvasRect.height) {
+						newY = canvasRect.height - elementRect.height;
+						document.getElementById('text_posY').disabled = true;
+					} else if (newY < 0) {
+						newY = 0;
+						document.getElementById('text_posY').disabled = true;
+					} else {
+						document.getElementById('text_posY').disabled = false;
+					}
+
+					tab[0].style.top = newY + 'px';
+				});
+
+
 			}
 		});
 
